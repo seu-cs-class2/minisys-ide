@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Minisys IDE</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" href="../style/index.css">
+  </head>
+  <body>
+    <div class="toolbar">
+      <p>Here is the toolbar...</p>
+    </div>
+    <div class="container">
+      <div id="sidebar">
+        <p>Here is the sidebar...</p>
+      </div>
+      <div id="editor"></div>
+    </div>
+  </body>
+  <script src="../../lib/ace.js"></script>
+  <script src="../../lib/mode-mips.js"></script>
+  <script src="../../lib/theme-github.js"></script>
+  <script>require('../script/editor.js')</script>
+</html>
