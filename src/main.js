@@ -1,4 +1,6 @@
 const { app, BrowserWindow } = require('electron')
+var remote = require('electron').remote;
+var Menu   = remote.Menu;
 
 function createWindow () {   
   // 创建浏览器窗口
@@ -14,7 +16,7 @@ function createWindow () {
   win.loadFile('index.html')
 
   // 打开开发者工具
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 }
 
 // Electron会在初始化完成并且准备好创建浏览器窗口时调用这个方法
@@ -36,6 +38,17 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
+
+  var mainMenu = Menu.buildFromTemplate([{
+    submenu: [{
+        label: 'Open',
+        click: ()=>{}
+    }, {
+        label: 'Save As',
+        click: ()=>{}
+    }]
+}]);
+Menu.setApplicationMenu(mainMenu);
 })
 
 // 您可以把应用程序其他的流程写在在此文件中
