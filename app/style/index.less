@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+.toolbar {
+  height: 50px;
+  width: 100%;
+  background-color: rgb(252, 243, 175);
+}
+
+.container {
+  width: 100%;
+  height: calc(100% - 50px);
+  display: flex;
+  #sidebar {
+    width: 250px;
+    height: 100%;
+    background-color: skyblue;
+  }
+  #editor {
+    flex: 1;
+    height: 100%;
+  }
+}
