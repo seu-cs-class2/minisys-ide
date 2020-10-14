@@ -7,9 +7,9 @@ const editor = window.editor
 // fs
 // 
 
-const dssdsdsd = [
+const contextMenuMenu = [
   {
-    label: '剪切',
+    label: 'haha',
     accelerator: 'ctrl+x',
   },
   {
@@ -31,7 +31,7 @@ const dssdsdsd = [
 ]
 
 console.log(editor);
-var m = Menu.buildFromTemplate(dssdsdsd)
+var m = Menu.buildFromTemplate(contextMenuMenu)
 
 editorContextmenu.addEventListener('contextmenu', e => {
   e.preventDefault()
