@@ -43,3 +43,5 @@ Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate))
 editor.session.setMode(CCppMode)
 // TODO: 支持设置字体大小
 editor.setFontSize(16)
+
+window.editor = editor
