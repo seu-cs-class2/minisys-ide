@@ -4,9 +4,9 @@ var editorContextmenu = document.getElementById('editor')
 const editor = window.editor
 
 
-const contextmenuTemplate = [
+const contextMenuMenu = [
   {
-    label: '剪切',
+    label: 'haha',
     accelerator: 'ctrl+x',
   },
   {
@@ -28,7 +28,7 @@ const contextmenuTemplate = [
 ]
 
 console.log(editor);
-var m = Menu.buildFromTemplate(contextmenuTemplate)
+var m = Menu.buildFromTemplate(contextMenuMenu)
 
 editorContextmenu.addEventListener('contextmenu', e => {
   e.preventDefault()
