@@ -3,6 +3,9 @@ const remote = require('electron').remote
 var editorContextmenu = document.getElementById('editor')
 const editor = window.editor
 
+// copy-paste
+// fs
+// 
 
 const dssdsdsd = [
   {
