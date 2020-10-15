@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, remote } = require('electron')
 
 app.on('ready', () => {
   const win = new BrowserWindow({
@@ -10,7 +10,8 @@ app.on('ready', () => {
     },
   })
   win.loadFile('./app/view/index.html')
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
+  
 })
 
 app.on('window-all-closed', () => {
@@ -22,3 +23,4 @@ app.on('activate', () => {
     createWindow()
   }
 })
+

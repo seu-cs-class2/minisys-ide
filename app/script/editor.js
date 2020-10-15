@@ -17,6 +17,19 @@ const menuTemplate = [
     ],
   },
   {
+    label: '编辑',
+    submenu: [
+      {
+        label: '撤销',
+        accelerator:'ctrl+z',
+        role:'redo'
+      },
+      {
+        label: '保存文件',
+      },
+    ],
+  },
+  {
     label: '设置',
     submenu: [
       {
@@ -43,3 +56,7 @@ Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate))
 editor.session.setMode(CCppMode)
 // TODO: 支持设置字体大小
 editor.setFontSize(16)
+editor.setHighlightActiveLine(true)
+editor.setTheme('../../lib/mode-c_cpp.js')
+
+window.editor = editor
