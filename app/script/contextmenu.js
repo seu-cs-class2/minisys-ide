@@ -35,7 +35,7 @@ const contextMenu = [
   },
 ]
 
-console.log(editor)
+//console.log(editor)
 var m = Menu.buildFromTemplate(contextMenu)
 
 editorContextmenu.addEventListener('contextmenu', e => {
