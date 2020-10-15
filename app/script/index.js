@@ -10,7 +10,7 @@ app.on('ready', () => {
     },
   })
   win.loadFile('./app/view/index.html')
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
   
 })
 
