@@ -3,10 +3,12 @@ const { app, Menu, dialog } = require('electron').remote
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
 const CCppMode = 'ace/mode/c_cpp'
+const MipsMode = 'ace/mode/mips'
 const fs = require('fs')
 const path = require('path')
 const { compileFunction } = require('vm')
 
+let curFilePath
 const menuTemplate = [
   {
     label: '文件',
@@ -22,37 +24,89 @@ const menuTemplate = [
             })
             .then(res => {
               //console.log(res.filePaths[0])
-              if (res.filePaths[0]) {
-                fs.readFile(res.filePaths[0], 'utf8', (err, data) => {
+              // if(res.filePaths.size()>1){
+              //   console.log('不能选择超过一个文件')
+              // }
+              curFilePath = res.filePaths[0]
+              if (curFilePath) {
+                fs.readFile(curFilePath, 'utf8', (err, data) => {
                   if (err) {
                     console.log(err)
                   }
-                  console.log(data)
+                  //console.log(data)
                   editor.setValue(data)
                   editor.moveCursorTo(0)
+                  switch (path.basename(curFilePath)) {
+                    case 'c':
+                    case 'cpp':
+                    case 'h':
+                      editor.setMode(CCppMode)
+                      break
+                    case 'mips':
+                      editor.setMode(MipsMode)
+                      break
+                    default:
+                      editor.setMode(CCppMode)
+                      break
+                  }
                 })
               }
             })
         },
       },
       {
-        label: '保存文件',
+        label: '保存',
         accelerator: 'ctrl+s',
+        click: () => {
+          console.log(curFilePath)
+          if (curFilePath) {
+            fs.writeFile(curFilePath, editor.getValue(), 'utf8', err => {
+              console.log(editor.getValue())
+              if (err) {
+                console.log(err)
+              } else {
+                dialog
+                  .showMessageBox({
+                    type: 'info',
+                    title: '保存成功！',
+                    message: '保存成功！',
+                    button: ['确定'],
+                  })
+                  .then(res => {
+                    console.log(res)
+                  })
+              }
+            })
+          }
+        },
+      },
+      {
+        label: '另存为',
+        accelerator: '',
         click: () => {
           dialog
             .showSaveDialog({
-              title: '保存文件..',
+              title: '另存为..',
             })
             .then(res => {
-              console.log(editor.getValue())
-              console.log(res.filePath)
+              //console.log(editor.getValue())
+              //console.log(res.filePath)
               if (res.filePath) {
                 fs.writeFile(res.filePath, editor.getValue(), 'utf8', err => {
                   console.log(editor.getValue())
                   if (err) {
                     console.log(err)
                   } else {
-                    console.log('save done!')
+                    dialog
+                      .showMessageBox({
+                        type: 'info',
+                        title: '保存成功！',
+                        message: '保存成功！',
+                        button: ['确定'],
+                      })
+                      .then(res => {
+                        console.log(res)
+                      })
                   }
                 })
               }
@@ -81,9 +135,15 @@ const menuTemplate = [
     submenu: [
       {
         label: '编辑器设置',
+        click: () => {
+          window.open('./app/view/editorSettings.html')
+        },
       },
       {
         label: '工具链设置',
+        click: () => {
+          window.open('./app/view/toolbarSettings.html')
+        },
       },
       {
         label: '开发者工具',

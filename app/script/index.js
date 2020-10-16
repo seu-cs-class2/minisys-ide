@@ -11,7 +11,6 @@ app.on('ready', () => {
   })
   win.loadFile('./app/view/index.html')
   //win.webContents.openDevTools()
-  
 })
 
 app.on('window-all-closed', () => {
