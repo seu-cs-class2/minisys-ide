@@ -20,9 +20,23 @@ body {
 .container #sidebar {
   width: 250px;
   height: 100%;
-  background-color: skyblue;
+  background-color: #b0d2e0;
 }
 .container #editor {
   flex: 1;
   height: 100%;
+}
+#sidebar ul {
+  margin-left: 0;
+}
+#sidebar li {
+  padding-left: 10px;
+  list-style: none;
+  font-size: 14px;
+  line-height: 21px;
+  font-family: 'Consolas', monospace;
+  cursor: pointer;
+}
+#sidebar li:hover {
+  background: #ccc;
 }

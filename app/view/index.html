@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Minisys IDE</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel="stylesheet" href="../style/index.css">
+    <link rel="stylesheet" href="../style/index.css" />
   </head>
   <body>
     <div class="toolbar">
@@ -12,14 +12,28 @@
     </div>
     <div class="container">
       <div id="sidebar">
-        <p>Here is the sidebar...</p>
+        <p id="current-path">CurrentPath</p>
+        <div id="tree-view">
+          <ul>
+            <li>a.exe</li>
+            <li>b.exe</li>
+            <li>
+              <ul>
+                <li>c.txt</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <hr />
       </div>
       <div id="editor"></div>
     </div>
   </body>
   <script src="../../lib/ace.js"></script>
-  <script src="../../lib/mode-mips.js"></script>
-  <script src="../../lib/theme-github.js"></script>
-  <script>require('../script/editor.js')</script>
-  <script>require('../script/contextmenu.js')</script>
+  <script>
+    require('../script/editor.js')
+  </script>
+  <script>
+    require('../script/contextmenu.js')
+  </script>
 </html>

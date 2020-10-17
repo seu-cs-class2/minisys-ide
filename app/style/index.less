@@ -22,10 +22,27 @@ body {
   #sidebar {
     width: 250px;
     height: 100%;
-    background-color: skyblue;
+    background-color: rgb(176, 210, 224);
   }
   #editor {
     flex: 1;
     height: 100%;
+  }
+}
+
+#sidebar {
+  ul {
+    margin-left: 0;
+  }
+  li {
+    padding-left: 10px;
+    list-style: none;
+    font-size: 14px;
+    line-height: 14 * 1.5px;
+    font-family: 'Consolas', monospace;
+    cursor: pointer;
+    &:hover {
+      background: #ccc;
+    }
   }
 }

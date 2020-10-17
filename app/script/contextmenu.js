@@ -1,29 +1,27 @@
 const { app, Menu } = require('electron').remote
-const remote = require('electron').remote
-var editorContextmenu = document.getElementById('editor')
+const editorContextmenu = document.getElementById('editor')
 const editor = window.editor
-const cvtool = require('copy-paste')
 
 const contextMenu = [
   {
     label: '全选',
     accelerator: 'ctrl+a',
-    role:'selectall'
+    role: 'selectall',
   },
   {
     label: '剪切',
     accelerator: 'ctrl+x',
-    role:'cut'
+    role: 'cut',
   },
   {
     label: '复制',
     accelerator: 'ctrl+c',
-    role:'copy'
+    role: 'copy',
   },
   {
     label: '粘贴',
     accelerator: 'ctrl+v',
-    role:'paste'
+    role: 'paste',
   },
   {
     label: '帮助',
@@ -35,7 +33,6 @@ const contextMenu = [
   },
 ]
 
-console.log(editor)
 var m = Menu.buildFromTemplate(contextMenu)
 
 editorContextmenu.addEventListener('contextmenu', e => {

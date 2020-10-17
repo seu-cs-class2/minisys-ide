@@ -1,4 +1,6 @@
-const { app, Menu } = require('electron').remote
+const { Menu, dialog } = require('electron').remote
+const { setProperty } = require('./utils')
+const { updateSideBar } = require('./sidebar')
 
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
@@ -14,6 +16,14 @@ const menuTemplate = [
       {
         label: '保存文件',
       },
+      {
+        label: '打开文件夹',
+        click: async () => {
+          const path = (await dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] })).filePaths[0]
+          setProperty('currentPath', path)
+          updateSideBar()
+        },
+      },
     ],
   },
   {
@@ -21,8 +31,8 @@ const menuTemplate = [
     submenu: [
       {
         label: '撤销',
-        accelerator:'ctrl+z',
-        role:'redo'
+        accelerator: 'ctrl+z',
+        role: 'redo',
       },
       {
         label: '保存文件',
@@ -33,21 +43,21 @@ const menuTemplate = [
     label: '设置',
     submenu: [
       {
-        label: '编辑器设置'
+        label: '编辑器设置',
       },
       {
-        label: '工具链设置'
-      }
-    ]
+        label: '工具链设置',
+      },
+    ],
   },
   {
     label: '帮助',
     submenu: [
       {
-        label: '关于'
-      }
-    ]
-  }
+        label: '关于',
+      },
+    ],
+  },
 ]
 Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate))
 
@@ -57,6 +67,5 @@ editor.session.setMode(CCppMode)
 // TODO: 支持设置字体大小
 editor.setFontSize(16)
 editor.setHighlightActiveLine(true)
-editor.setTheme('../../lib/mode-c_cpp.js')
 
 window.editor = editor
