@@ -42,7 +42,7 @@ const menuTemplate = [
                     case 'h':
                       editor.setMode(CCppMode)
                       break
-                    case 'mips':
+                    case 'asm':
                       editor.setMode(MipsMode)
                       break
                     default:
