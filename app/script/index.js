@@ -1,5 +1,8 @@
 const { app, BrowserWindow, remote } = require('electron')
 
+//禁用安全性警告
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
+
 app.on('ready', () => {
   const win = new BrowserWindow({
     width: 1024,
@@ -22,4 +25,3 @@ app.on('activate', () => {
     createWindow()
   }
 })
-

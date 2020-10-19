@@ -8,22 +8,22 @@ const contextMenu = [
   {
     label: '全选',
     accelerator: 'ctrl+a',
-    role:'selectall'
+    role: 'selectall',
   },
   {
     label: '剪切',
     accelerator: 'ctrl+x',
-    role:'cut'
+    role: 'cut',
   },
   {
     label: '复制',
     accelerator: 'ctrl+c',
-    role:'copy'
+    role: 'copy',
   },
   {
     label: '粘贴',
     accelerator: 'ctrl+v',
-    role:'paste'
+    role: 'paste',
   },
   {
     label: '帮助',

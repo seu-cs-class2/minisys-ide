@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>编辑器设置</title>
-</head>
-<body>
-    
-</body>
-
+  </head>
+  <body>
+    <!-- <div class="sidebar">
+    </div> -->
+    <div class="options">
+      <div>
+        <div>
+          <text>Font Size:</text>
+          <input id="fontSize" type="text" />
+        </div>
+        <div>
+          <text>Editor Theme:</text>
+          <select id="theme">
+            <option value="ambiance">ambiance</option>
+            <option value="chaos">chaos</option>
+            <option value="chrome">chrome</option>
+            <option value="xcode">xcode</option>
+            <option value="vibrant_ink">vibrant_ink</option>
+            <option value="terminal">terminal</option>
+            <option value="sqlserver">sqlserver</option>
+            <option value="github">github</option>
+          </select>
+          <button onclick="confirmChange()">确认修改</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="../script/editorSettings.js"></script>
 </html>
