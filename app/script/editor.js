@@ -6,7 +6,6 @@ const CCppMode = 'ace/mode/c_cpp'
 const MipsMode = 'ace/mode/mips'
 const fs = require('fs')
 const path = require('path')
-const { compileFunction } = require('vm')
 
 let curFilePath
 const menuTemplate = [
@@ -35,21 +34,26 @@ const menuTemplate = [
                   }
                   //console.log(data)
                   editor.setValue(data)
-                  editor.moveCursorTo(0)
-                  switch (path.basename(curFilePath)) {
-                    case 'c':
-                    case 'cpp':
-                    case 'h':
-                      editor.setMode(CCppMode)
-                      break
-                    case 'asm':
-                      editor.setMode(MipsMode)
-                      break
-                    default:
-                      editor.setMode(CCppMode)
-                      break
-                  }
                 })
+                editor.moveCursorTo(0)
+                console.log(path.extname(curFilePath))
+                console.log(curFilePath)
+                switch (path.extname(curFilePath)) {
+                  case '.c':
+                  case '.cpp':
+                  case '.h':
+                    editor.session.setMode(CCppMode)
+                    console.log('change to cppmode')
+                    break
+                  case '.asm':
+                    editor.session.setMode(MipsMode)
+                    console.log('change to mipsmode')
+                    break
+                  default:
+                    editor.session.setMode(CCppMode)
+                    console.log('unknown filetype,change to cppmode')
+                    break
+                }
               }
             })
         },
@@ -165,10 +169,30 @@ Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate))
 
 // TODO: 支持更换主题
 // editor.setTheme('ace/theme/github')
+//editor.setTheme('../../lib/mode-c_cpp.js')
+//设置语法高亮模式
 editor.session.setMode(CCppMode)
 // TODO: 支持设置字体大小
 editor.setFontSize(16)
+//设置选中行高亮
 editor.setHighlightActiveLine(true)
-//editor.setTheme('../../lib/mode-c_cpp.js')
+//设置代码补全
+const completerList = [{ meta: '#include<>', caption: 'include', value: 'include1', score: 1 }]
+let langTools = ace.require('ace/ext/language_tools')
+
+var setCompleterData = function (completerList) {
+  
+  langTools.addCompleter({
+    getCompletions: function (editor, session, pos, prefix, callback) {
+      if (prefix.length === 0) {
+        return callback(null, [])
+      } else {
+        return callback(null, completerList)
+      }
+    },
+  })
+}
+
+setCompleterData(completerList)
 
 window.editor = editor
