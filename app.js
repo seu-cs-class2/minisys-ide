@@ -2,7 +2,11 @@
 
 // 加载热重载插件
 try {
-  require('electron-reloader')(module, {})
+  require('electron-reloader')(module, {
+    ignore:[
+      './appSettings.properties'
+    ]
+  })
 } catch (_) {}
 
 // 加载首页
