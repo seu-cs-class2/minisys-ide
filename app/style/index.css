@@ -20,9 +20,32 @@ body {
 .container #sidebar {
   width: 250px;
   height: 100%;
-  background-color: skyblue;
+  background-color: #b0d2e0;
 }
 .container #editor {
   flex: 1;
   height: 100%;
+}
+#sidebar ul {
+  margin-left: 0;
+}
+#sidebar li {
+  padding-left: 12px;
+  list-style: none;
+  line-height: 24.5px;
+}
+#sidebar li span {
+  display: inline-block;
+  width: calc(100% - 24px);
+  height: 100%;
+  font-size: 14px;
+  font-family: 'Consolas', monospace;
+}
+#sidebar li span:hover {
+  cursor: pointer;
+  background: #ccc;
+}
+#sidebar .file-icon {
+  width: 16px;
+  height: 16px;
 }

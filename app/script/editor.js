@@ -1,4 +1,6 @@
 const { app, Menu, dialog } = require('electron').remote
+const { setProperty } = require('./utils')
+const { updateSideBarLow, initSideBar } = require('./sidebar')
 
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
@@ -22,10 +24,6 @@ const menuTemplate = [
               title: '打开文件..',
             })
             .then(res => {
-              //console.log(res.filePaths[0])
-              // if(res.filePaths.size()>1){
-              //   console.log('不能选择超过一个文件')
-              // }
               curFilePath = res.filePaths[0]
               if (curFilePath) {
                 fs.readFile(curFilePath, 'utf8', (err, data) => {
@@ -117,6 +115,14 @@ const menuTemplate = [
             })
         },
       },
+      {
+        label: '打开文件夹',
+        click: async () => {
+          const path = (await dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] })).filePaths[0]
+          setProperty('currentPath', path)
+          updateSideBarLow()
+        },
+      },
     ],
   },
   {
@@ -176,6 +182,9 @@ editor.session.setMode(CCppMode)
 editor.setFontSize(16)
 //设置选中行高亮
 editor.setHighlightActiveLine(true)
+
+initSideBar()
+
 //设置代码补全
 const completerList = [{ meta: '#include<>', caption: 'include', value: 'include1', score: 1 }]
 let langTools = ace.require('ace/ext/language_tools')
@@ -196,3 +205,4 @@ var setCompleterData = function (completerList) {
 setCompleterData(completerList)
 
 window.editor = editor
+
