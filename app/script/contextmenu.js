@@ -1,6 +1,5 @@
 const { app, Menu } = require('electron').remote
-const remote = require('electron').remote
-var editorContextmenu = document.getElementById('editor')
+const editorContextmenu = document.getElementById('editor')
 const editor = window.editor
 const cvtool = require('copy-paste')
 
@@ -35,7 +34,6 @@ const contextMenu = [
   },
 ]
 
-//console.log(editor)
 var m = Menu.buildFromTemplate(contextMenu)
 
 editorContextmenu.addEventListener('contextmenu', e => {

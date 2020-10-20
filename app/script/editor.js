@@ -1,4 +1,6 @@
 const { app, Menu, dialog } = require('electron').remote
+const { setProperty } = require('./utils')
+const { updateSideBarLow, initSideBar } = require('./sidebar')
 
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
@@ -124,8 +126,8 @@ const menuTemplate = [
         accelerator: 'ctrl+s',
         click: () => {
           curFilePath === undefined ? newFile() : saveFile()
-          console.log(curFilePath === undefined)
-          console.log(curFilePath)
+          // console.log(curFilePath === undefined)
+          // console.log(curFilePath)
         },
       },
       {

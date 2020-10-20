@@ -22,10 +22,37 @@ body {
   #sidebar {
     width: 250px;
     height: 100%;
-    background-color: skyblue;
+    background-color: rgb(176, 210, 224);
   }
   #editor {
     flex: 1;
     height: 100%;
+  }
+}
+
+#sidebar {
+  ul {
+    margin-left: 0;
+  }
+  li {
+    padding-left: 12px;
+    list-style: none;
+    line-height: 1.75 * 14px;
+    span {
+      // file name display
+      display: inline-block;
+      width: calc(100% - 24px);
+      height: 100%;
+      font-size: 14px;
+      font-family: 'Consolas', monospace;
+      &:hover {
+        cursor: pointer;
+        background: #ccc;
+      }
+    }
+  }
+  .file-icon {
+    width: 16px;
+    height: 16px;
   }
 }

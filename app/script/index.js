@@ -1,4 +1,4 @@
-const { app, BrowserWindow, remote } = require('electron')
+const { app, BrowserWindow } = require('electron')
 
 //禁用安全性警告
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'

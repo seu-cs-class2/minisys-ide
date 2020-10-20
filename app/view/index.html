@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Minisys IDE</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel="stylesheet" href="../style/index.css">
+    <link rel="stylesheet" href="../style/index.css" />
   </head>
   <body>
     <div class="toolbar">
-      <p>Here is the toolbar...</p>
+      <!-- TODO: -->
+      <p>
+        @Escapist0516<br />帮忙排一排按钮，正方形，找点图标【新建文件、保存、另存为】前面的左对齐--中间空着--后面的右对齐【一键执行、编译、汇编、串口烧写】
+      </p>
     </div>
     <div class="container">
       <div id="sidebar">
-        <p>Here is the sidebar...</p>
+        <div id="opened-view"></div>
+        <hr />
+        <p id="current-path">未打开任何目录</p>
+        <div id="tree-view"></div>
       </div>
       <div id="editor"></div>
     </div>
