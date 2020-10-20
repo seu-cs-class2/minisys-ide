@@ -1,6 +1,6 @@
 const { app, Menu, dialog } = require('electron').remote
 const { setProperty } = require('./utils')
-const { updateSideBar } = require('./sidebar')
+const { updateSideBarLow, initSideBar } = require('./sidebar')
 
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
@@ -24,10 +24,6 @@ const menuTemplate = [
               title: '打开文件..',
             })
             .then(res => {
-              //console.log(res.filePaths[0])
-              // if(res.filePaths.size()>1){
-              //   console.log('不能选择超过一个文件')
-              // }
               curFilePath = res.filePaths[0]
               if (curFilePath) {
                 fs.readFile(curFilePath, 'utf8', (err, data) => {
@@ -119,7 +115,7 @@ const menuTemplate = [
         click: async () => {
           const path = (await dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] })).filePaths[0]
           setProperty('currentPath', path)
-          updateSideBar()
+          updateSideBarLow()
         },
       },
     ],
@@ -180,3 +176,5 @@ editor.setFontSize(16)
 editor.setHighlightActiveLine(true)
 
 window.editor = editor
+
+initSideBar()

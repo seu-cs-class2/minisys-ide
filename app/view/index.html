@@ -8,29 +8,27 @@
   </head>
   <body>
     <div class="toolbar">
-      <p>Here is the toolbar...</p>
+      <!-- TODO: -->
+      <p>
+        @Escapist0516<br />帮忙排一排按钮，正方形，找点图标【新建文件、保存、另存为】前面的左对齐--中间空着--后面的右对齐【一键执行、编译、汇编、串口烧写】
+      </p>
     </div>
     <div class="container">
       <div id="sidebar">
-        <p id="current-path">CurrentPath</p>
-        <div id="tree-view">
-          <ul>
-            <li>a.exe</li>
-            <li>b.exe</li>
-            <li>
-              <ul>
-                <li>c.txt</li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+        <div id="opened-view"></div>
         <hr />
+        <p id="current-path">未打开任何目录</p>
+        <div id="tree-view"></div>
       </div>
       <div id="editor"></div>
     </div>
   </body>
   <script src="../../lib/ace.js"></script>
   <script src="../../lib/mode-mips.js"></script>
-  <script>require('../script/editor.js')</script>
-  <script>require('../script/contextmenu.js')</script>
+  <script>
+    require('../script/editor.js')
+  </script>
+  <script>
+    require('../script/contextmenu.js')
+  </script>
 </html>

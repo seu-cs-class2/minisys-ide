@@ -35,14 +35,24 @@ body {
     margin-left: 0;
   }
   li {
-    padding-left: 10px;
+    padding-left: 12px;
     list-style: none;
-    font-size: 14px;
-    line-height: 14 * 1.5px;
-    font-family: 'Consolas', monospace;
-    cursor: pointer;
-    &:hover {
-      background: #ccc;
+    line-height: 1.75 * 14px;
+    span {
+      // file name display
+      display: inline-block;
+      width: calc(100% - 24px);
+      height: 100%;
+      font-size: 14px;
+      font-family: 'Consolas', monospace;
+      &:hover {
+        cursor: pointer;
+        background: #ccc;
+      }
     }
+  }
+  .file-icon {
+    width: 16px;
+    height: 16px;
   }
 }

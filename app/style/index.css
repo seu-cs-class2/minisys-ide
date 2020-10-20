@@ -30,13 +30,22 @@ body {
   margin-left: 0;
 }
 #sidebar li {
-  padding-left: 10px;
+  padding-left: 12px;
   list-style: none;
-  font-size: 14px;
-  line-height: 21px;
-  font-family: 'Consolas', monospace;
-  cursor: pointer;
+  line-height: 24.5px;
 }
-#sidebar li:hover {
+#sidebar li span {
+  display: inline-block;
+  width: calc(100% - 24px);
+  height: 100%;
+  font-size: 14px;
+  font-family: 'Consolas', monospace;
+}
+#sidebar li span:hover {
+  cursor: pointer;
   background: #ccc;
+}
+#sidebar .file-icon {
+  width: 16px;
+  height: 16px;
 }
