@@ -1,6 +1,7 @@
 const { app, Menu, dialog, BrowserWindow } = require('electron').remote
 const { setProperty } = require('./utils')
 const { updateSideBarLow, initSideBar } = require('./sidebar')
+const child_process = require('child_process')
 
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
@@ -97,20 +98,15 @@ const newFile = () => {
     })
 }
 
-let openSettingsWin = loadURL => {
-  let settingsWin = new BrowserWindow({
-    width: 400,
-    height: 600,
-  })
-  settingsWin.setMenu(null)
-  settingsWin.loadURL(path.join(__dirname,'../view/', loadURL))
-  settingsWin.show()
-}
-
 const menuTemplate = [
   {
     label: '文件',
     submenu: [
+      {
+        label: '新建文件',
+        accelerator: 'ctrl+n',
+        click: newFile,
+      },
       {
         label: '打开文件',
         accelerator: 'ctrl+o',
@@ -138,6 +134,13 @@ const menuTemplate = [
         accelerator: '',
         click: newFile,
       },
+      {
+        label: '退出',
+        accelerator: 'alt+f4',
+        click: () => {
+          app.quit()
+        },
+      },
     ],
   },
   {
@@ -153,6 +156,57 @@ const menuTemplate = [
         accelerator: 'ctrl+y',
         role: 'redo',
       },
+      {
+        label: '全选',
+        accelerator: 'ctrl+a',
+        role: 'selectall',
+      },
+      {
+        label: '剪切',
+        accelerator: 'ctrl+x',
+        role: 'cut',
+      },
+      {
+        label: '复制',
+        accelerator: 'ctrl+c',
+        role: 'copy',
+      },
+      {
+        label: '粘贴',
+        accelerator: 'ctrl+v',
+        role: 'paste',
+      },
+      {
+        label: '查找',
+        accelerator: 'ctrl+f',
+        role: 'paste',
+      },
+      {
+        label: '替换',
+        accelerator: 'ctrl+h',
+        role: 'paste',
+      },
+    ],
+  },
+  {
+    label: '运行',
+    submenu: [
+      {
+        label: '一键执行',
+        accelerator: 'f5',
+      },
+      {
+        label: '编译',
+        accelerator: 'f6',
+      },
+      {
+        label: '汇编',
+        accelerator: 'f7',
+      },
+      {
+        label: '串口烧写',
+        accelerator: 'f8',
+      },
     ],
   },
   {
@@ -162,13 +216,7 @@ const menuTemplate = [
         label: '编辑器设置',
         // FIXME:
         click: () => {
-          const handler = window.open(
-            './EditorSettings.html',
-            '_blank',
-            'width=400px,height=300px,left=50px,menu=no,menubar=no,menu-bar=no'
-          )
-          // handler.setMenu(null)
-          console.log(handler)
+          window.open('./EditorSettings.html', '_blank', 'width=400,height=300,left=25%,frame=false,resizable=false')
         },
       },
       {
@@ -187,6 +235,12 @@ const menuTemplate = [
   {
     label: '帮助',
     submenu: [
+      {
+        label: '文档',
+        click: () => {
+          child_process.exec(`start https://github.com/seu-cs-class2/minisys-ide/blob/master/README.md`)
+        },
+      },
       {
         label: '关于',
       },

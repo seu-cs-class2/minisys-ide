@@ -28,14 +28,6 @@ const contextMenu = [
     accelerator: 'ctrl+v',
     role: 'paste',
   },
-  {
-    label: '帮助',
-    submenu: [
-      {
-        label: '关于',
-      },
-    ],
-  },
 ]
 
 const menu = Menu.buildFromTemplate(contextMenu)

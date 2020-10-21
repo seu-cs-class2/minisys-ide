@@ -7,19 +7,19 @@
     <title>编辑器配置</title>
   </head>
   <body>
+    <div id="header">
+      <img src="../../asset/settings_icon.png" id="logo" />
+      编辑器配置
+    </div>
+
     <div class="options">
-      <div>
-        <div>
-          <text>Font Size:</text>
-          <input id="font-size" type="number" />
-        </div>
-        <div>
-          <text>Editor Theme:</text>
-          <select id="theme"></select>
-          <button id="btn-confirm">确认修改</button>
-        </div>
-        <button id="confirmBtn" onclick="confirmChange()">确认修改</button>
-      </div>
+      <label for="font-size">Font Size: <input id="font-size" type="number" /></label>
+      <br />
+      <label for="theme"
+        >Theme:
+        <select id="theme"></select>
+      </label>
+      <button id="btn-confirm">确认修改</button>
     </div>
   </body>
   <script src="../script/editorSettings.js"></script>

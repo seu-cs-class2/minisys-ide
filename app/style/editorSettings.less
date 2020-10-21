@@ -1,31 +1,46 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
 body {
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   align-content: center;
 }
 
+html {
+  border: 2px solid gray;
+}
+
+#header {
+  #logo {
+    width: 32px;
+    height: auto;
+  }
+}
+
 .options {
-  width: 100%;
-  display: flex;
+  width: auto;
   background-color: aquamarine;
   text-align: center;
+  margin: 0 auto;
   #font {
     width: 100%;
-    #Label {
+    label {
       width: 10%;
       background-color: blueviolet;
     }
-    #fontSize {
+    #font-size {
       width: 100%;
     }
   }
   #theme {
-    width: 100%;
-    #Label {
-      width: 20%;
-    }
-    #theme {
-      width: 100%;
+    width: auto;
+    li {
+      border-radius: 50%;
     }
   }
 

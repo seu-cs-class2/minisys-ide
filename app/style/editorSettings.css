@@ -1,32 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+html,
 body {
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   align-content: center;
 }
+html {
+  border: 2px solid gray;
+}
+#header #logo {
+  width: 32px;
+  height: auto;
+}
 .options {
-  width: 100%;
-  display: flex;
+  width: auto;
   background-color: aquamarine;
   text-align: center;
+  margin: 0 auto;
 }
 .options #font {
   width: 100%;
 }
-.options #font #Label {
+.options #font label {
   width: 10%;
   background-color: blueviolet;
 }
-.options #font #fontSize {
+.options #font #font-size {
   width: 100%;
 }
 .options #theme {
-  width: 100%;
+  width: auto;
 }
-.options #theme #Label {
-  width: 20%;
-}
-.options #theme #theme {
-  width: 100%;
+.options #theme li {
+  border-radius: 50%;
 }
 .options #confirmBtn {
   width: 100%;
