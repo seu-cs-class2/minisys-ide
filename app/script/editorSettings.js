@@ -1,40 +1,53 @@
+// 编辑器配置逻辑
+
+'use strict'
+
 const fs = require('fs')
 const path = require('path')
 const { dialog } = require('electron').remote
 const jsonPath = path.join(__dirname, '../../appSettings.json')
-// console.log(jsonPath)
+// 注意，这里是个新窗口，拿不到 ./utils，因此自己做work-around
+const $ = document.querySelector.bind(document)
+
 let appSettings
-let fontSize = document.getElementById('fontSize')
-let theme = document.getElementById('theme')
+const fontSizeDOM = $('#font-size')
+const themeDOM = $('#theme')
 const themeTable = ['ambiance', 'chaos', 'chrome', 'xcode', 'vibrant_ink', 'terminal', 'sqlserver', 'github']
 
+// 读取配置，初始化菜单选项
 fs.readFile(jsonPath, 'utf-8', (err, data) => {
   if (err) {
     console.log(err)
   } else {
     appSettings = JSON.parse(data)
-    fontSize.value = appSettings.font_size
-    theme.selectedIndex = themeTable.map(item => item).indexOf(appSettings.theme)
+    fontSizeDOM.value = appSettings.font_size
+    themeTable.forEach(theme => {
+      const node = document.createElement('option')
+      node.innerHTML = theme
+      node.value = theme
+      themeDOM.appendChild(node)
+    })
+    themeDOM.selectedIndex = themeTable.indexOf(appSettings.theme)
   }
-  // console.log('appSettings')
-  // console.log(appSettings.theme)
 })
 
-function confirmChange() {
-  appSettings.font_size = parseInt(fontSize.value)
-  //console.log(theme.options[theme.selectedIndex].value)
-  appSettings.theme = theme.options[theme.selectedIndex].value
-  fs.writeFile(jsonPath, JSON.stringify(appSettings), async (err) => {
+$('#btn-confirm').onclick = function () {
+  appSettings.font_size = parseInt(fontSizeDOM.value)
+  appSettings.theme = themeDOM.options[themeDOM.selectedIndex].value
+  fs.writeFile(jsonPath, JSON.stringify(appSettings, null, 2), async err => {
     if (err) {
       console.log(err)
     } else {
-    //   await dialog.showMessageBox({
-    //     type: 'info',
-    //     title: '保存成功！',
-    //     message: '保存成功！',
-    //     button: ['确定'],
-    //   })
-      window.opener.eval(`window.editor.setFontSize(${appSettings.font_size});window.editor.setTheme('ace/theme/${appSettings.theme}')`)
+      window.opener.eval(
+        `window.editor.setFontSize(${appSettings.font_size});window.editor.setTheme('ace/theme/${appSettings.theme}')`
+      )
+      await dialog.showMessageBox({
+        type: 'info',
+        title: '提示',
+        message: '保存成功！',
+        button: ['确定'],
+      })
+      window.close()
     }
   })
 }

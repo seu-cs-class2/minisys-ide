@@ -1,7 +1,11 @@
-const { app, Menu } = require('electron').remote
-const editorContextmenu = document.getElementById('editor')
-const editor = window.editor
-const cvtool = require('copy-paste')
+// 右键菜单逻辑
+
+'use strict'
+
+const { $ } = require('./utils')
+const remote = require('electron').remote
+const { Menu } = remote
+const editorContextmenu = $('#editor')
 
 const contextMenu = [
   {
@@ -34,9 +38,9 @@ const contextMenu = [
   },
 ]
 
-var m = Menu.buildFromTemplate(contextMenu)
+const menu = Menu.buildFromTemplate(contextMenu)
 
 editorContextmenu.addEventListener('contextmenu', e => {
   e.preventDefault()
-  m.popup({ window: remote.getCurrentWindow() })
+  menu.popup({ window: remote.getCurrentWindow() })
 })
