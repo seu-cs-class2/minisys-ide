@@ -4,29 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../style/editorSettings.css" />
-    <title>编辑器设置</title>
+    <title>编辑器配置</title>
   </head>
   <body>
-    <!-- <div class="sidebar">
-    </div> -->
     <div class="options">
       <div>
-        <div id="font">
-          <text if="Label">Font Size:</text>
-          <input id="fontSize" type="text" />
+        <div>
+          <text>Font Size:</text>
+          <input id="font-size" type="number" />
         </div>
-        <div id="theme">
-          <text id="Label">Editor Theme:</text>
-          <select id="theme">
-            <option value="ambiance">ambiance</option>
-            <option value="chaos">chaos</option>
-            <option value="chrome">chrome</option>
-            <option value="xcode">xcode</option>
-            <option value="vibrant_ink">vibrant_ink</option>
-            <option value="terminal">terminal</option>
-            <option value="sqlserver">sqlserver</option>
-            <option value="github">github</option>
-          </select>
+        <div>
+          <text>Editor Theme:</text>
+          <select id="theme"></select>
+          <button id="btn-confirm">确认修改</button>
         </div>
         <button id="confirmBtn" onclick="confirmChange()">确认修改</button>
       </div>

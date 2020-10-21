@@ -4,106 +4,91 @@ const { updateSideBarLow, initSideBar } = require('./sidebar')
 
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
-const CCppMode = 'ace/mode/c_cpp'
-const MipsMode = 'ace/mode/mips'
-const { POINT_CONVERSION_COMPRESSED } = require('constants')
+const EditorMode = {
+  CCppMode: 'ace/mode/c_cpp',
+  MipsMode: 'ace/mode/mips',
+}
 const fs = require('fs')
 const path = require('path')
 
 let curFilePath
 
-//打开文件
-let openFile = () => {
+/**
+ * 打开文件
+ */
+const openFile = () => {
   dialog
     .showOpenDialog({
       title: '打开文件..',
     })
     .then(res => {
-      //console.log(res.filePaths[0])
-      // if(res.filePaths.size()>1){
-      //   //console.log('不能选择超过一个文件')
-      // }
       curFilePath = res.filePaths[0]
       if (curFilePath) {
         fs.readFile(curFilePath, 'utf8', (err, data) => {
-          if (err) {
-            //console.log(err)
-          }
-          //console.log(data)
           editor.setValue(data)
           editor.moveCursorTo(0)
         })
-        //console.log(path.extname(curFilePath))
-        //console.log(curFilePath)
         switch (path.extname(curFilePath)) {
           case '.c':
           case '.cpp':
           case '.h':
-            editor.session.setMode(CCppMode)
-            //console.log('change to cppmode')
+            editor.session.setMode(EditorMode.CCppMode)
             break
           case '.asm':
-            editor.session.setMode(MipsMode)
-            //console.log('change to mipsmode')
+            editor.session.setMode(EditorMode.MipsMode)
             break
           default:
-            editor.session.setMode(CCppMode)
-            //console.log('unknown filetype,change to cppmode')
+            editor.session.setMode(EditorMode.CCppMode) // FIXME: 应为无高亮模式
             break
         }
       }
     })
 }
 
-//保存至打开的文件
-let saveFile = () => {
-  //console.log(curFilePath)
+/**
+ * 保存至打开的文件
+ */
+const saveFile = () => {
   if (curFilePath) {
     fs.writeFile(curFilePath, editor.getValue(), 'utf8', err => {
-      //console.log(editor.getValue())
       if (err) {
-        //console.log(err)
+        console.log(err)
       } else {
-        dialog
-          .showMessageBox({
-            type: 'info',
-            title: '保存成功！',
-            message: '保存成功！',
-            button: ['确定'],
-          })
-          .then(res => {
-            //console.log(res)
-          })
+        dialog.showMessageBox({
+          type: 'info',
+          title: '提示',
+          message: '保存成功！',
+          button: ['确定'],
+        })
       }
     })
   } else {
   }
 }
 
-//新建文件并保存
-let newFile = () => {
+/**
+ * 新建文件并保存
+ */
+const newFile = () => {
   dialog
     .showSaveDialog({
       title: '另存为..',
     })
     .then(res => {
-      //console.log(editor.getValue())
-      //console.log(res.filePath)
       if (res.filePath) {
         fs.writeFile(res.filePath, editor.getValue(), 'utf8', err => {
-          //console.log(editor.getValue())
           if (err) {
-            //console.log(err)
+            console.log(err)
           } else {
             dialog
               .showMessageBox({
                 type: 'info',
-                title: '保存成功！',
+                title: '提示',
                 message: '保存成功！',
                 button: ['确定'],
               })
               .then(res1 => {
-                //console.log(res1)
+                // TODO: ?
                 curFilePath = res.filePath
               })
           }
@@ -132,12 +117,20 @@ const menuTemplate = [
         click: openFile,
       },
       {
+        label: '打开文件夹',
+        click: async () => {
+          const path = (await dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] })).filePaths[0]
+          if (path) {
+            setProperty('currentPath', path)
+            updateSideBarLow()
+          }
+        },
+      },
+      {
         label: '保存',
         accelerator: 'ctrl+s',
         click: () => {
           curFilePath === undefined ? newFile() : saveFile()
-          // console.log(curFilePath === undefined)
-          // console.log(curFilePath)
         },
       },
       {
@@ -167,9 +160,15 @@ const menuTemplate = [
     submenu: [
       {
         label: '编辑器设置',
+        // FIXME:
         click: () => {
-          window.open('./editorSettings.html', '_blank', 'width=400px,height=300px,left=50px,menubar=no,')
-          //openSettingsWin('editorSettings.html')
+          const handler = window.open(
+            './EditorSettings.html',
+            '_blank',
+            'width=400px,height=300px,left=50px,menu=no,menubar=no,menu-bar=no'
+          )
+          // handler.setMenu(null)
+          console.log(handler)
         },
       },
       {
@@ -196,28 +195,21 @@ const menuTemplate = [
 ]
 Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate))
 
-//加载配置文件
+// 加载配置文件
 let appSettings
 const jsonPath = path.join(__dirname, '../../appSettings.json')
-// const fileContent = fs.readFileSync(jsonPath).toString()
-fs.readFile(jsonPath, 'utf-8', (err, data) => {
+fs.readFile(jsonPath, 'utf8', (err, data) => {
   if (err) {
-    console.log('err')
     console.log(err)
   } else {
     appSettings = JSON.parse(data)
-    // TODO: 支持更换主题
-    console.log(appSettings)
     editor.setTheme('ace/theme/' + appSettings.theme)
-    //editor.setTheme('../../lib/mode-c_cpp.js')
-    //设置语法高亮模式
+    // 设置语法高亮模式
     editor.session.setMode('ace/mode/' + appSettings.hightlight_mode)
-    // TODO: 支持设置字体大小
     editor.setFontSize(appSettings.font_size)
-    console.log(appSettings.font_size)
-    //设置选中行高亮
+    // 设置选中行高亮
     editor.setHighlightActiveLine(true)
-    //设置代码补全
+    // 设置代码补全
     editor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: true,
@@ -226,15 +218,14 @@ fs.readFile(jsonPath, 'utf-8', (err, data) => {
   }
 })
 
-//自定义代码联想内容 meta为联想注释 caption为联想下拉框显示的值
-//value为联想替换的结果 score为优先级，数值越大越靠前
+// 自定义代码联想内容 meta为联想注释 caption为联想下拉框显示的值
+// value为联想替换的结果 score为优先级，数值越大越靠前
 const completerList = [
   { meta: '#include1<>', caption: 'include', value: 'include1', score: 1 },
   { meta: '#include<>', caption: 'include1', value: 'include123', score: 2 },
 ]
-let langTools = ace.require('ace/ext/language_tools')
-
-var setCompleterData = function (completerList) {
+const langTools = ace.require('ace/ext/language_tools')
+const setCompleterData = function (completerList) {
   langTools.addCompleter({
     getCompletions: function (editor, session, pos, prefix, callback) {
       if (prefix.length === 0) {
@@ -245,7 +236,8 @@ var setCompleterData = function (completerList) {
     },
   })
 }
-
 setCompleterData(completerList)
+
+initSideBar()
 
 window.editor = editor
