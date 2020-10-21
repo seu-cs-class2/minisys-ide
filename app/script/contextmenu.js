@@ -1,6 +1,7 @@
 const { app, Menu } = require('electron').remote
 const editorContextmenu = document.getElementById('editor')
 const editor = window.editor
+const cvtool = require('copy-paste')
 
 const contextMenu = [
   {

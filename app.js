@@ -4,7 +4,7 @@
 try {
   require('electron-reloader')(module, {
     ignore:[
-      './appSettings.properties'
+      './appSettings.json'
     ]
   })
 } catch (_) {}

@@ -1,5 +1,8 @@
 const { app, BrowserWindow } = require('electron')
 
+//禁用安全性警告
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
+
 app.on('ready', () => {
   const win = new BrowserWindow({
     width: 1024,
@@ -10,7 +13,7 @@ app.on('ready', () => {
     },
   })
   win.loadFile('./app/view/index.html')
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 })
 
 app.on('window-all-closed', () => {
