@@ -1,16 +1,23 @@
+// 侧边栏相关逻辑
+
 'use strict'
 
 const { getProperty, setProperty, $ } = require('./utils')
 const dree = require('dree')
 
-module.exports.initSideBar = function () {
+/**
+ * 初始化侧边栏
+ */
+function initSideBar() {
   setProperty('currentOpenedFiles', [])
   $('#tree-view').addEventListener('dblclick', e => {
+    e.stopPropagation()
     const target = e.target
     const dataset = target.dataset
     const currentOpenedFiles = getProperty('currentOpenedFiles')
     if (currentOpenedFiles.some(v => v.path == dataset.path)) return
     if (dataset.type == 'file') {
+      // 更新文件开关状态
       currentOpenedFiles.push({
         path: dataset.path,
         name: dataset.name,
@@ -46,40 +53,52 @@ module.exports.initSideBar = function () {
     }
   })
 }
+module.exports.initSideBar = initSideBar
 
+/**
+ * 获取文件图标
+ * @param {'file' | 'directory'} type
+ * @param {string} filename
+ */
+function getIcon(type, filename) {
+  let icon = ''
+  if (type == 'directory') icon = 'folder_icon.png'
+  else {
+    const split = filename.split('.')
+    const ext = split[split.length - 1]
+    const extToIcon = {
+      asm: 'asm_icon.png',
+      c: 'c_icon.png',
+    }
+    const defaultIcon = 'default_icon.png'
+    icon = extToIcon[ext] || defaultIcon
+  }
+  const iconUrl = '../../asset/' + icon
+  return iconUrl
+}
+
+/**
+ * 更新侧边栏上半部分（已打开的文件）
+ */
 function updateSideBarHigh() {
   $('#opened-view').innerHTML = ''
   const currentOpenedFiles = getProperty('currentOpenedFiles')
   let res = '<ul>'
   currentOpenedFiles.forEach(file => {
-    res += `<li>${file.name}</li>`
+    res += `<li ${getIcon('file', `"${file.name}"`)}>${file.name}</li>`
   })
   res += '</ul>'
   $('#opened-view').innerHTML = res
 }
 module.exports.updateSideBarHigh = updateSideBarHigh
 
-module.exports.updateSideBarLow = function () {
+/**
+ * 更新侧边栏下半部分（目录树）
+ */
+function updateSideBarLow() {
   const currentPath = getProperty('currentPath')
   const dreeTree = dree.scan(currentPath)
   $('#current-path').innerHTML = currentPath
-
-  function getIcon(type, filename) {
-    let icon = ''
-    if (type == 'directory') icon = 'folder_icon.png'
-    else {
-      const split = filename.split('.')
-      const ext = split[split.length - 1]
-      const extToIcon = {
-        asm: 'asm_icon.png',
-        c: 'c_icon.png',
-      }
-      const defaultIcon = 'default_icon.png'
-      icon = extToIcon[ext] || defaultIcon
-    }
-    const iconUrl = '../../asset/' + icon
-    return iconUrl
-  }
 
   function printTree(tree) {
     let res = ''
@@ -97,7 +116,7 @@ module.exports.updateSideBarLow = function () {
             </li>`
           else
             res += `<li>
-            <img src="${getIcon(null, children.name)}" class="file-icon"></img>
+            <img src="${getIcon('file', children.name)}" class="file-icon"></img>
             <span data-path="${children.path}" data-type="file" data-name="${children.name}">
               ${children.name}
             </span>
@@ -109,3 +128,4 @@ module.exports.updateSideBarLow = function () {
 
   $('#tree-view').innerHTML = printTree(dreeTree)
 }
+module.exports.updateSideBarLow = updateSideBarLow
