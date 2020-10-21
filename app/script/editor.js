@@ -1,4 +1,4 @@
-const { app, Menu, dialog } = require('electron').remote
+const { app, Menu, dialog, BrowserWindow } = require('electron').remote
 const { setProperty } = require('./utils')
 const { updateSideBarLow, initSideBar } = require('./sidebar')
 
@@ -112,6 +112,16 @@ let newFile = () => {
     })
 }
 
+let openSettingsWin = loadURL => {
+  let settingsWin = new BrowserWindow({
+    width: 400,
+    height: 600,
+  })
+  settingsWin.setMenu(null)
+  settingsWin.loadURL(path.join(__dirname,'../view/', loadURL))
+  settingsWin.show()
+}
+
 const menuTemplate = [
   {
     label: '文件',
@@ -158,7 +168,8 @@ const menuTemplate = [
       {
         label: '编辑器设置',
         click: () => {
-          window.open('./editorSettings.html', '_blank', 'width=400px,height=300px,left=50px')
+          window.open('./editorSettings.html', '_blank', 'width=400px,height=300px,left=50px,menubar=no,')
+          //openSettingsWin('editorSettings.html')
         },
       },
       {
@@ -200,7 +211,7 @@ fs.readFile(jsonPath, 'utf-8', (err, data) => {
     editor.setTheme('ace/theme/' + appSettings.theme)
     //editor.setTheme('../../lib/mode-c_cpp.js')
     //设置语法高亮模式
-    editor.session.setMode('ace/mode/'+appSettings.hightlight_mode)
+    editor.session.setMode('ace/mode/' + appSettings.hightlight_mode)
     // TODO: 支持设置字体大小
     editor.setFontSize(appSettings.font_size)
     console.log(appSettings.font_size)

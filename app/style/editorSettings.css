@@ -16,7 +16,7 @@ body {
   width: 10%;
   background-color: blueviolet;
 }
-.options #font #Content {
+.options #font #fontSize {
   width: 100%;
 }
 .options #theme {
@@ -25,7 +25,7 @@ body {
 .options #theme #Label {
   width: 20%;
 }
-.options #theme #Content {
+.options #theme #theme {
   width: 100%;
 }
 .options #confirmBtn {
