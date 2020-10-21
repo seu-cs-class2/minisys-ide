@@ -85,7 +85,7 @@ function updateSideBarHigh() {
   const currentOpenedFiles = getProperty('currentOpenedFiles')
   let res = '<ul>'
   currentOpenedFiles.forEach(file => {
-    res += `<li ${getIcon('file', `"${file.name}"`)}>${file.name}</li>`
+    res += `<li><img class="file-icon" src="${getIcon('file', `"${file.name}"`)}"></img><span>${file.name}</span></li>`
   })
   res += '</ul>'
   $('#opened-view').innerHTML = res
