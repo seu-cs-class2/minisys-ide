@@ -1,0 +1,33 @@
+body {
+  width: 100%;
+  height: 100%;
+  align-content: center;
+}
+.options {
+  width: 100%;
+  display: flex;
+  background-color: aquamarine;
+  text-align: center;
+}
+.options #font {
+  width: 100%;
+}
+.options #font #Label {
+  width: 10%;
+  background-color: blueviolet;
+}
+.options #font #Content {
+  width: 100%;
+}
+.options #theme {
+  width: 100%;
+}
+.options #theme #Label {
+  width: 20%;
+}
+.options #theme #Content {
+  width: 100%;
+}
+.options #confirmBtn {
+  width: 100%;
+}
