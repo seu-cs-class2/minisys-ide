@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "electron ."
+    "dev": "set NODE_ENV=development && electron .",
+    "start": "set NODE_ENV=production && electron ."
   },
   "author": "",
   "license": "ISC",
