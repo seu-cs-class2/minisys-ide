@@ -1,0 +1,6 @@
+const { initSideBar } = require('./sidebar.js')
+const { initMainMenu } = require('./mainMenu.js')
+const { initToolBar } = require('./toolbar.js')
+initSideBar()
+initToolBar()
+initMainMenu()

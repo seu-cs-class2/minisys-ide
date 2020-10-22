@@ -6,7 +6,7 @@ const { app, BrowserWindow } = require('electron')
 // FIXME: 暂时注释，避免隐藏调试时的错误
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
-app.on('ready', () => {
+app.on('ready', async () => {
   const win = new BrowserWindow({
     width: 1024,
     height: 768,
@@ -16,7 +16,7 @@ app.on('ready', () => {
       worldSafeExecuteJavaScript: true,
     },
   })
-  win.loadFile('./app/view/index.html')
+  await win.loadFile('./app/view/index.html')
 })
 
 app.on('window-all-closed', () => {
