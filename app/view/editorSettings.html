@@ -8,18 +8,22 @@
   </head>
   <body>
     <div id="header">
-      <img src="../../asset/settings_icon.png" id="logo" />
-      编辑器配置
+      <img draggable="false" src="../../asset/settings_icon.png" id="logo" />
+      <span id="title">编辑器配置</span>
     </div>
 
     <div class="options">
-      <label for="font-size">Font Size: <input id="font-size" type="number" /></label>
-      <br />
-      <label for="theme"
-        >Theme:
-        <select id="theme"></select>
-      </label>
-      <button id="btn-confirm">确认修改</button>
+      <div class="ribbon">
+        <label id="label" for="input">Font Size: <input id="input" name="font-size" type="number" /></label>
+      </div>
+      <div class="ribbon">
+        <label id="label" for="theme"
+          >Theme:
+          <select id="select" name="theme"></select>
+        </label>
+      </div>
+      <button class="btn-xx" id="btn-confirm">确认修改</button>
+      <button class="btn-xx" id="btn-quit">放弃修改</button>
     </div>
   </body>
   <script src="../script/editorSettings.js"></script>

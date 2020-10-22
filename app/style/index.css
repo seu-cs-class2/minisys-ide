@@ -12,6 +12,29 @@ body {
   width: 100%;
   background-color: #fcf3af;
 }
+.toolbar img {
+  height: 36px;
+  margin-top: 7px;
+}
+.toolbar img:hover {
+  box-sizing: border-box;
+  border: 1px solid black;
+  cursor: pointer;
+}
+.toolbar .left {
+  float: left;
+  margin-left: 14px;
+}
+.toolbar .left img {
+  margin-right: 14px;
+}
+.toolbar .right {
+  float: right;
+  margin-right: 14px;
+}
+.toolbar .right img {
+  margin-left: 14px;
+}
 .container {
   width: 100%;
   height: calc(100% - 50px);

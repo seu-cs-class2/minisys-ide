@@ -10,8 +10,8 @@ const jsonPath = path.join(__dirname, '../../appSettings.json')
 const $ = document.querySelector.bind(document)
 
 let appSettings
-const fontSizeDOM = $('#font-size')
-const themeDOM = $('#theme')
+const fontSizeDOM = $('[name="font-size"]')
+const themeDOM = $('[name="theme"]')
 const themeTable = ['ambiance', 'chaos', 'chrome', 'xcode', 'vibrant_ink', 'terminal', 'sqlserver', 'github']
 
 // 读取配置，初始化菜单选项
@@ -50,4 +50,8 @@ $('#btn-confirm').onclick = function () {
       window.close()
     }
   })
+}
+
+$('#btn-quit').onclick = function () {
+  window.close()
 }

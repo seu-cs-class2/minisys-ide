@@ -7,11 +7,18 @@
     <link rel="stylesheet" href="../style/index.css" />
   </head>
   <body>
-    <div class="toolbar">
-      <!-- TODO: -->
-      <p>
-        @Escapist0516<br />帮忙排一排按钮，正方形，找点图标【新建文件、保存、另存为】前面的左对齐--中间空着--后面的右对齐【一键执行、编译、汇编、串口烧写】
-      </p>
+    <div class="toolbar" id="toolbar">
+      <span class="left">
+        <img id="new-file" draggable="false" src="../../asset/newFile_icon.png" title="新建文件" />
+        <img id="save" draggable="false" src="../../asset/save_icon.png" title="保存文件" />
+        <img id="save-as" draggable="false" src="../../asset/saveAs_icon.png" title="另存为" />
+      </span>
+      <span class="right">
+        <img id="magic-click" draggable="false" src="../../asset/magicClick_icon.png" title="一键执行" />
+        <img id="compile" draggable="false" src="../../asset/compile_icon.png" title="编译" />
+        <img id="assembly" draggable="false" src="../../asset/assembly_icon.png" title="汇编" />
+        <img id="serial" draggable="false" src="../../asset/serial_icon.png" title="串口烧录" />
+      </span>
     </div>
     <div class="container">
       <div id="sidebar">

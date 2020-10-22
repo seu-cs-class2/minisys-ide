@@ -1,102 +1,14 @@
 const { app, Menu, dialog, BrowserWindow } = require('electron').remote
-const { setProperty } = require('./utils')
+const { setProperty, getProperty } = require('./utils')
 const { updateSideBarLow, initSideBar } = require('./sidebar')
 const child_process = require('child_process')
 
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
-const EditorMode = {
-  CCppMode: 'ace/mode/c_cpp',
-  MipsMode: 'ace/mode/mips',
-}
 const fs = require('fs')
 const path = require('path')
-
-let curFilePath
-
-/**
- * 打开文件
- */
-const openFile = () => {
-  dialog
-    .showOpenDialog({
-      title: '打开文件..',
-    })
-    .then(res => {
-      curFilePath = res.filePaths[0]
-      if (curFilePath) {
-        fs.readFile(curFilePath, 'utf8', (err, data) => {
-          editor.setValue(data)
-          editor.moveCursorTo(0)
-        })
-        switch (path.extname(curFilePath)) {
-          case '.c':
-          case '.cpp':
-          case '.h':
-            editor.session.setMode(EditorMode.CCppMode)
-            break
-          case '.asm':
-            editor.session.setMode(EditorMode.MipsMode)
-            break
-          default:
-            editor.session.setMode(EditorMode.CCppMode) // FIXME: 应为无高亮模式
-            break
-        }
-      }
-    })
-}
-
-/**
- * 保存至打开的文件
- */
-const saveFile = () => {
-  if (curFilePath) {
-    fs.writeFile(curFilePath, editor.getValue(), 'utf8', err => {
-      if (err) {
-        console.log(err)
-      } else {
-        dialog.showMessageBox({
-          type: 'info',
-          title: '提示',
-          message: '保存成功！',
-          button: ['确定'],
-        })
-      }
-    })
-  } else {
-  }
-}
-
-/**
- * 新建文件并保存
- */
-const newFile = () => {
-  dialog
-    .showSaveDialog({
-      title: '另存为..',
-    })
-    .then(res => {
-      if (res.filePath) {
-        fs.writeFile(res.filePath, editor.getValue(), 'utf8', err => {
-          if (err) {
-            console.log(err)
-          } else {
-            dialog
-              .showMessageBox({
-                type: 'info',
-                title: '提示',
-                message: '保存成功！',
-                button: ['确定'],
-              })
-              .then(res1 => {
-                // TODO: ?
-                curFilePath = res.filePath
-              })
-          }
-        })
-      }
-    })
-}
+const { newFileDialog, openFileDialog, saveFileDialog } = require('./fsOperator')
+const { initToolBar } = require('./toolbar')
 
 const menuTemplate = [
   {
@@ -105,12 +17,12 @@ const menuTemplate = [
       {
         label: '新建文件',
         accelerator: 'ctrl+n',
-        click: newFile,
+        click: newFileDialog('新建文件'),
       },
       {
         label: '打开文件',
         accelerator: 'ctrl+o',
-        click: openFile,
+        click: openFileDialog,
       },
       {
         label: '打开文件夹',
@@ -126,13 +38,13 @@ const menuTemplate = [
         label: '保存',
         accelerator: 'ctrl+s',
         click: () => {
-          curFilePath === undefined ? newFile() : saveFile()
+          !getProperty('curFilePath') ? newFileDialog('保存为')() : saveFileDialog()
         },
       },
       {
         label: '另存为',
         accelerator: '',
-        click: newFile,
+        click: newFileDialog('另存为'),
       },
       {
         label: '退出',
@@ -293,5 +205,6 @@ const setCompleterData = function (completerList) {
 setCompleterData(completerList)
 
 initSideBar()
+initToolBar()
 
 window.editor = editor
