@@ -11,6 +11,7 @@ const handlers = {
     !getProperty('curFilePath') ? newFileDialog('保存为')() : saveFileDialog()
   },
   'save-as': newFileDialog('另存为'),
+  toolbar: () => {},
 }
 
 function initToolBar() {
