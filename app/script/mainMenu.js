@@ -3,6 +3,7 @@ const { setProperty, getProperty } = require('./utils')
 const { updateSideBarLow } = require('./sidebar')
 const child_process = require('child_process')
 const { newFileDialog, openFileDialog, saveFileDialog } = require('./fsOperator')
+const { find } = require('./editor')
 
 const menuTemplate = [
   {
@@ -29,6 +30,9 @@ const menuTemplate = [
         },
       },
       {
+        type:'separator'
+      },
+      {
         label: '保存',
         accelerator: 'ctrl+s',
         click: () => {
@@ -39,6 +43,9 @@ const menuTemplate = [
         label: '另存为',
         accelerator: '',
         click: newFileDialog('另存为'),
+      },
+      {
+        type:'separator'
       },
       {
         label: '退出',
@@ -63,6 +70,9 @@ const menuTemplate = [
         role: 'redo',
       },
       {
+        type:'separator'
+      },
+      {
         label: '全选',
         accelerator: 'ctrl+a',
         role: 'selectall',
@@ -83,14 +93,21 @@ const menuTemplate = [
         role: 'paste',
       },
       {
+        type:'separator'
+      },
+      {
         label: '查找',
         accelerator: 'ctrl+f',
-        role: 'paste',
+        click:()=>{
+          editor.execCommand("find")
+        }
       },
       {
         label: '替换',
         accelerator: 'ctrl+h',
-        role: 'paste',
+        click:()=>{
+          editor.execCommand("replace")
+        }
       },
     ],
   },
@@ -130,6 +147,9 @@ const menuTemplate = [
         click: () => {
           window.open('./app/view/toolbarSettings.html')
         },
+      },
+      {
+        type:'separator'
       },
       {
         label: '开发者工具',

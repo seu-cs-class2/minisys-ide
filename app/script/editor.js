@@ -1,15 +1,10 @@
 const { app, Menu, dialog, BrowserWindow } = require('electron').remote
-const { setProperty, getProperty } = require('./utils')
-const { updateSideBarLow, initSideBar } = require('./sidebar')
 const child_process = require('child_process')
 
 // 在 #editor 上新建 ace editor 实例
 const editor = ace.edit('editor')
 const fs = require('fs')
 const path = require('path')
-const { newFileDialog, openFileDialog, saveFileDialog } = require('./fsOperator')
-const { initToolBar } = require('./toolbar')
-const { initMainMenu } = require('./mainMenu')
 
 // 加载配置文件
 let appSettings
@@ -36,10 +31,17 @@ fs.readFile(jsonPath, 'utf8', (err, data) => {
 
 // 自定义代码联想内容 meta为联想注释 caption为联想下拉框显示的值
 // value为联想替换的结果 score为优先级，数值越大越靠前
-const completerList = [
-  { meta: '#include1<>', caption: 'include', value: 'include1', score: 1 },
-  { meta: '#include<>', caption: 'include1', value: 'include123', score: 2 },
-]
+let completerListJson
+const completerDatabasePath = path.join(__dirname, '../../completerDatabase.json')
+fs.readFile(completerDatabasePath, 'utf8', (err, data) => {
+  if (err) {
+    console.log(err)
+  } else {
+    // console.log(JSON.parse(data))
+    completerListJson = JSON.parse(data).db
+    console.log(completerListJson)
+  }
+})
 const langTools = ace.require('ace/ext/language_tools')
 const setCompleterData = function (completerList) {
   langTools.addCompleter({
@@ -52,5 +54,18 @@ const setCompleterData = function (completerList) {
     },
   })
 }
-setCompleterData(completerList)
+setCompleterData(completerListJson)
 window.editor = editor
+
+let find = needle => {
+  return function () {
+    editor.find(needle, {
+      backwards: false,
+      warp: false,
+      caseSensitive: false,
+      wholeWord: false,
+      regExp: false,
+    })
+  }
+}
+module.exports.find = find
