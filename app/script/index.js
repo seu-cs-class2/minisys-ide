@@ -1,12 +1,13 @@
 'use strict'
 
 const { app, BrowserWindow } = require('electron')
+const path = require('path')
 
 // 禁用安全性警告
 // FIXME: 暂时注释，避免隐藏调试时的错误
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
-app.on('ready', async () => {
+app.on('ready', () => {
   const win = new BrowserWindow({
     width: 1024,
     height: 768,
@@ -15,8 +16,9 @@ app.on('ready', async () => {
       enableRemoteModule: true,
       worldSafeExecuteJavaScript: true,
     },
+    icon: path.join(__dirname, '../../asset/favicon.ico')
   })
-  await win.loadFile('./app/view/index.html')
+  win.loadFile('./app/view/index.html')
 })
 
 app.on('window-all-closed', () => {

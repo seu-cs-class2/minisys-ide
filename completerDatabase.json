@@ -1,6 +1,3 @@
 {
-    "db":[
-        { "meta": "#include1<>", "caption": "include", "value": "include1", "score": 1 },
-        { "meta": "#include<>", "caption": "include1", "value": "include123", "score": 2 }
-    ]
+  "db": []
 }

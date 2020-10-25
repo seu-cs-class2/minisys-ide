@@ -4,6 +4,7 @@
 
 const { getProperty, setProperty, $ } = require('./utils')
 const dree = require('dree')
+const path = require('path')
 
 /**
  * 初始化侧边栏
@@ -64,8 +65,7 @@ function getIcon(type, filename) {
   let icon = ''
   if (type == 'directory') icon = 'folder_icon.png'
   else {
-    const split = filename.split('.')
-    const ext = split[split.length - 1]
+    const ext = path.extname(filename).substring(1)
     const extToIcon = {
       asm: 'asm_icon.png',
       c: 'c_icon.png',
@@ -85,7 +85,7 @@ function updateSideBarHigh() {
   const currentOpenedFiles = getProperty('currentOpenedFiles')
   let res = '<ul>'
   currentOpenedFiles.forEach(file => {
-    res += `<li><img class="file-icon" src="${getIcon('file', `"${file.name}"`)}"></img><span>${file.name}</span></li>`
+    res += `<li><img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span>${file.name}</span></li>`
   })
   res += '</ul>'
   $('#opened-view').innerHTML = res

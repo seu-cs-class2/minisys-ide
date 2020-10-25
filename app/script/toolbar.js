@@ -1,7 +1,11 @@
-const { newFileDialog, saveFileDialog } = require('./fsOperator')
+// 工具栏逻辑
+
+'use strict'
+
+const { newFileDialog, saveFileDialog } = require('./fileOperation')
 const { $, getProperty } = require('./utils')
 
-function func() {
+function defaultFunc() {
   alert('该功能尚未开发完毕，请期待后续版本更新，或打赏我们支持我们的工作！')
 }
 
@@ -17,7 +21,7 @@ const handlers = {
 function initToolBar() {
   $('#toolbar').addEventListener('click', function (ev) {
     try {
-      ;(handlers[ev.target.id] || func)()
+      ;(handlers[ev.target.id] || defaultFunc)()
     } catch (ex) {
       console.error(ex)
     }
