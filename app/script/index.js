@@ -19,6 +19,7 @@ app.on('ready', () => {
     icon: path.join(__dirname, '../../asset/favicon.ico')
   })
   win.loadFile('./app/view/index.html')
+  // win.webContents.openDevTools()
 })
 
 app.on('window-all-closed', () => {

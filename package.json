@@ -6,18 +6,35 @@
   "scripts": {
     "dev": "set NODE_ENV=development && electron .",
     "start": "set NODE_ENV=production && electron .",
-    "package":"electron-packager . plasticIDE --platform=win32 --arch=x64 --out=./out --app-version=1.0.0 --overwrite"
+    "build": "electron-builder --win --x64"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "copy-paste": "^1.3.0",
     "dree": "^2.4.16",
-    "electron": "^10.1.3",
     "jquery": "^3.5.1"
   },
   "devDependencies": {
+    "electron": "^10.1.3",
+    "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
     "electron-reloader": "^1.0.1"
+  },
+  "build": {
+    "appId": "com.plasticIDE.app",
+    "asar": false,
+    "win": {
+      "icon": "./asset/favicon.ico",
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }
