@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "set NODE_ENV=development && electron .",
-    "start": "set NODE_ENV=production && electron ."
+    "start": "set NODE_ENV=production && electron .",
+    "package":"electron-packager . plasticIDE --platform=win32 --arch=x64 --out=./out --app-version=1.0.0 --overwrite"
   },
   "author": "",
   "license": "ISC",
