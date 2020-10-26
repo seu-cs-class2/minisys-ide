@@ -15,7 +15,7 @@ const themeDOM = $('[name="theme"]')
 const themeTable = ['ambiance', 'chaos', 'chrome', 'xcode', 'vibrant_ink', 'terminal', 'sqlserver', 'github']
 
 // 读取配置，初始化菜单选项
-fs.readFile(jsonPath, 'utf-8', (err, data) => {
+fs.readFile(jsonPath, 'utf8', (err, data) => {
   if (err) {
     console.log(err)
   } else {
@@ -39,7 +39,7 @@ $('#btn-confirm').onclick = function () {
       console.log(err)
     } else {
       window.opener.eval(
-        `window.editor.setFontSize(${appSettings.font_size});window.editor.setTheme('ace/theme/${appSettings.theme}')`
+        `window.editor.setFontSize(${appSettings.font_size});window.editor.setTheme('ace/theme/${appSettings.theme}');`
       )
       await dialog.showMessageBox({
         type: 'info',

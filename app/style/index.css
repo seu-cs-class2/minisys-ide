@@ -49,6 +49,15 @@ body {
   flex: 1;
   height: 100%;
 }
+#sidebar {
+  user-select: none;
+}
+#sidebar #opened-view {
+  margin-top: 5px;
+}
+#sidebar #current-path {
+  margin: 5px;
+}
 #sidebar ul {
   margin-left: 0;
 }

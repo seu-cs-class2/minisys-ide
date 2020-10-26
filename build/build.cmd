@@ -1,0 +1,1 @@
+rem TODO: call electron-packager to build for win32 arch

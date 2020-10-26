@@ -1,9 +1,12 @@
-const { app, Menu, dialog, BrowserWindow } = require('electron').remote
+// 菜单栏逻辑
+
+'use strict'
+
+const { app, Menu, dialog } = require('electron').remote
 const { setProperty, getProperty } = require('./utils')
 const { updateSideBarLow } = require('./sidebar')
 const child_process = require('child_process')
-const { newFileDialog, openFileDialog, saveFileDialog } = require('./fsOperator')
-const { find } = require('./editor')
+const { newFileDialog, openFileDialog, saveFileDialog } = require('./fileOperation')
 
 const menuTemplate = [
   {
@@ -30,7 +33,7 @@ const menuTemplate = [
         },
       },
       {
-        type:'separator'
+        type: 'separator',
       },
       {
         label: '保存',
@@ -45,7 +48,7 @@ const menuTemplate = [
         click: newFileDialog('另存为'),
       },
       {
-        type:'separator'
+        type: 'separator',
       },
       {
         label: '退出',
@@ -70,7 +73,7 @@ const menuTemplate = [
         role: 'redo',
       },
       {
-        type:'separator'
+        type: 'separator',
       },
       {
         label: '全选',
@@ -93,21 +96,21 @@ const menuTemplate = [
         role: 'paste',
       },
       {
-        type:'separator'
+        type: 'separator',
       },
       {
         label: '查找',
         accelerator: 'ctrl+f',
-        click:()=>{
-          editor.execCommand("find")
-        }
+        click: () => {
+          editor.execCommand('find')
+        },
       },
       {
         label: '替换',
         accelerator: 'ctrl+h',
-        click:()=>{
-          editor.execCommand("replace")
-        }
+        click: () => {
+          editor.execCommand('replace')
+        },
       },
     ],
   },
@@ -137,7 +140,6 @@ const menuTemplate = [
     submenu: [
       {
         label: '编辑器设置',
-        // FIXME:
         click: () => {
           window.open('./EditorSettings.html', '_blank', 'width=400,height=300,left=25%,frame=false,resizable=false')
         },
@@ -145,11 +147,11 @@ const menuTemplate = [
       {
         label: '工具链设置',
         click: () => {
-          window.open('./app/view/toolbarSettings.html')
+          window.open('./ToolchainSettings.html', '_blank', 'width=600,height=400,left=25%,frame=true,resizable=false')
         },
       },
       {
-        type:'separator'
+        type: 'separator',
       },
       {
         label: '开发者工具',
@@ -173,8 +175,8 @@ const menuTemplate = [
     ],
   },
 ]
+
 function initMainMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate))
 }
-
 module.exports.initMainMenu = initMainMenu

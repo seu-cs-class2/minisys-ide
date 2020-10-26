@@ -1,6 +1,10 @@
+// 文件操作逻辑
+
+'use strict'
+
 const { setProperty, getProperty } = require('./utils')
-const fs = require('fs')
 const { dialog } = require('electron').remote
+const fs = require('fs')
 const path = require('path')
 
 const EditorMode = {
@@ -48,7 +52,7 @@ const saveFile = () => {
   if (getProperty('curFilePath')) {
     fs.writeFile(getProperty('curFilePath'), editor.getValue(), 'utf8', err => {
       if (err) {
-        console.log(err)
+        console.error(err)
       } else {
         dialog.showMessageBox({
           type: 'info',
