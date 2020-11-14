@@ -5,7 +5,7 @@
 const fs = require('fs')
 const path = require('path')
 const { dialog } = require('electron').remote
-const jsonPath = path.join(__dirname, '../../appSettings.json')
+const jsonPath = path.join(__dirname, '../../config/AppSettings.json')
 // 注意，这里是个新窗口，拿不到 ./utils，因此自己做work-around
 const $ = document.querySelector.bind(document)
 
@@ -18,6 +18,12 @@ const themeTable = ['ambiance', 'chaos', 'chrome', 'xcode', 'vibrant_ink', 'term
 fs.readFile(jsonPath, 'utf8', (err, data) => {
   if (err) {
     console.log(err)
+    dialog.showMessageBox({
+      type: 'error',
+      title: '错误',
+      message: '读取配置文件失败',
+      button: ['确定'],
+    })
   } else {
     appSettings = JSON.parse(data)
     fontSizeDOM.value = appSettings.font_size
@@ -37,7 +43,14 @@ $('#btn-confirm').onclick = function () {
   fs.writeFile(jsonPath, JSON.stringify(appSettings, null, 2), async err => {
     if (err) {
       console.log(err)
+      dialog.showMessageBox({
+        type: 'error',
+        title: '错误',
+        message: '保存配置文件失败',
+        button: ['确定'],
+      })
     } else {
+      // 实时预览
       window.opener.eval(
         `window.editor.setFontSize(${appSettings.font_size});window.editor.setTheme('ace/theme/${appSettings.theme}');`
       )

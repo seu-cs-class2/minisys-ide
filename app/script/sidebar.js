@@ -11,7 +11,7 @@ const path = require('path')
  */
 function initSideBar() {
   setProperty('currentOpenedFiles', [])
-  $('#tree-view').addEventListener('dblclick', e => {
+  $('#tree-view').addEventListener('click', e => {
     e.stopPropagation()
     const target = e.target
     const dataset = target.dataset
@@ -26,19 +26,22 @@ function initSideBar() {
       updateSideBarHigh()
     } else if (dataset.type == 'directory') {
       // 更新文件夹开关状态
-      function findClosestSiblingUL(dom) {
-        let on = false
+      /**
+       * 寻找最近的兄弟姐妹结点
+       */
+      function findClosestSibling(dom, label, mustAfter) {
+        let on = !mustAfter
         let res = void 0
         dom.parentNode.childNodes.forEach(node => {
           if (node == dom) on = true
-          if (on && node.nodeType == 1 && node.tagName.toLowerCase() == 'ul') {
+          if (on && node.nodeType == 1 && node.tagName.toLowerCase() == label.toLowerCase()) {
             res = node
             return
           }
         })
         return res
       }
-      const closestUL = findClosestSiblingUL(target)
+      const closestUL = findClosestSibling(target, 'ul', true)
       let child = closestUL.firstChild
       const childs = [child]
       while (child != closestUL.lastChild) {
@@ -51,6 +54,9 @@ function initSideBar() {
           // prettier-ignore
           v.style.display = ({ 'none': 'block', 'block': 'none' })[v.style.display.trim() || 'block']
         })
+      // 更新文件夹开闭图标
+      const closestImg = findClosestSibling(target, 'img', false)
+      closestImg.src = getIcon('directory', '', ['on', 'off'][Number(!!closestImg.src.match(/folderon/))])
     }
   })
 }
@@ -60,10 +66,11 @@ module.exports.initSideBar = initSideBar
  * 获取文件图标
  * @param {'file' | 'directory'} type
  * @param {string} filename
+ * @param {'on' | 'off'} status
  */
-function getIcon(type, filename) {
+function getIcon(type, filename, status) {
   let icon = ''
-  if (type == 'directory') icon = 'folder_icon.png'
+  if (type == 'directory') icon = `folder${status}_icon.png`
   else {
     const ext = path.extname(filename).substring(1)
     const extToIcon = {
@@ -108,7 +115,7 @@ function updateSideBarLow() {
         for (let children of tree.children)
           if (children.type == 'directory')
             res += `<li>
-            <img src="${getIcon('directory')}" class="file-icon"></img>
+            <img src="${getIcon('directory', '', 'on')}" class="file-icon"></img>
             <span data-path="${children.path}" data-type="directory" data-name="${children.name}">
              ${children.name}
             </span>

@@ -11,7 +11,8 @@ function defaultFunc() {
 
 const handlers = {
   'new-file': newFileDialog('新建文件'),
-  save: () => {
+  // prettier-ignore
+  'save': () => {
     !getProperty('curFilePath') ? newFileDialog('保存为')() : saveFileDialog()
   },
   'save-as': newFileDialog('另存为'),
