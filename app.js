@@ -4,7 +4,7 @@
 if (process.env.NODE_ENV && process.env.NODE_ENV.trim() == 'development') {
   try {
     require('electron-reloader')(module, {
-      ignore: ['./appSettings.json'],
+      ignore: ['./config/AppSettings.json', './config/CompleterDatabase.json'],
     })
   } catch (_) {}
 }
