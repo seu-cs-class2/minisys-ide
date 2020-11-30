@@ -13,27 +13,23 @@ body {
   height: 50px;
   width: 100%;
   background-color: rgb(252, 243, 175);
-  img {
-    height: 36px;
-    margin-top: 7px;
-  }
-  img:hover {
-    box-sizing: border-box;
-    border: 1px solid black;
-    cursor: pointer;
-  }
+  position: relative;
   .left {
-    float: left;
-    margin-left: 14px;
-    img {
-      margin-right: 14px;
-    }
+    position: absolute;
+    left: 8px;
   }
   .right {
-    float: right;
-    margin-right: 14px;
-    img {
-      margin-left: 14px;
+    position: absolute;
+    right: 10px;
+  }
+  img {
+    height: 36px;
+    width: 36px;
+    margin: 7px 7px;
+    &:hover {
+      box-sizing: border-box;
+      border: 1px solid black;
+      cursor: pointer;
     }
   }
 }

@@ -11,7 +11,8 @@ function defaultFunc() {
 
 const handlers = {
   'new-file': newFileDialog('新建文件'),
-  save: () => {
+  // prettier-ignore
+  'save': () => {
     !getProperty('curFilePath') ? newFileDialog('保存为')() : saveFileDialog()
   },
   'save-as': newFileDialog('另存为'),
@@ -20,6 +21,7 @@ const handlers = {
 
 function initToolBar() {
   $('#toolbar').addEventListener('click', function (ev) {
+    if (ev.target.tagName.toLowerCase() != 'img') return
     try {
       ;(handlers[ev.target.id] || defaultFunc)()
     } catch (ex) {

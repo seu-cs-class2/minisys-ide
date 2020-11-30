@@ -63,6 +63,12 @@ const saveFile = () => {
       }
     })
   } else {
+    dialog.showMessageBox({
+      type: 'info',
+      title: '提示',
+      message: '保存成功！',
+      button: ['确定'],
+    })
   }
 }
 module.exports.saveFileDialog = saveFile

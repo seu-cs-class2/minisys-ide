@@ -8,23 +8,26 @@
   </head>
   <body>
     <div class="toolbar" id="toolbar">
-      <span class="left">
+      <div class="left">
         <img id="new-file" draggable="false" src="../../asset/newFile_icon.png" title="新建文件" />
         <img id="save" draggable="false" src="../../asset/save_icon.png" title="保存文件" />
         <img id="save-as" draggable="false" src="../../asset/saveAs_icon.png" title="另存为" />
-      </span>
-      <span class="right">
+      </div>
+      <div class="right">
         <img id="magic-click" draggable="false" src="../../asset/magicClick_icon.png" title="一键执行" />
         <img id="compile" draggable="false" src="../../asset/compile_icon.png" title="编译" />
         <img id="assembly" draggable="false" src="../../asset/assembly_icon.png" title="汇编" />
         <img id="serial" draggable="false" src="../../asset/serial_icon.png" title="串口烧录" />
-      </span>
+      </div>
     </div>
     <div class="container">
       <div id="sidebar">
         <div id="opened-view"></div>
         <hr />
-        <p id="current-path">未打开任何目录</p>
+        <div style="text-align: right">
+          <img src="../../asset/refresh_icon.png" id="refresh" style="width: 16px; height: auto" />
+        </div>
+        <span id="current-path">未打开任何目录</span>
         <div id="tree-view"></div>
       </div>
       <div id="editor"></div>
@@ -34,11 +37,7 @@
   <script src="../../lib/ace/ext-language_tools.js"></script>
   <script>
     require('../script/initAll.js')
-  </script>
-  <script>
     require('../script/editor.js')
-  </script>
-  <script>
     require('../script/contextmenu.js')
   </script>
 </html>
