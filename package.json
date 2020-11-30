@@ -21,7 +21,7 @@
     "electron-reloader": "^1.0.1"
   },
   "build": {
-    "appId": "com.plasticIDE.app",
+    "appId": "com.minisys.ide.app",
     "asar": false,
     "win": {
       "icon": "./asset/favicon.ico",

@@ -21,6 +21,7 @@ const handlers = {
 
 function initToolBar() {
   $('#toolbar').addEventListener('click', function (ev) {
+    if (ev.target.tagName.toLowerCase() != 'img') return
     try {
       ;(handlers[ev.target.id] || defaultFunc)()
     } catch (ex) {

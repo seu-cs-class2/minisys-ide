@@ -5,12 +5,18 @@
 const { getProperty, setProperty, $ } = require('./utils')
 const dree = require('dree')
 const path = require('path')
+const fs = require('fs')
 
 /**
  * 初始化侧边栏
  */
 function initSideBar() {
   setProperty('currentOpenedFiles', [])
+  $('#refresh').addEventListener('click', () => {
+    updateSideBarLow()
+  })
+
+  // 设置下半部分（目录树）监听
   $('#tree-view').addEventListener('click', e => {
     e.stopPropagation()
     const target = e.target
@@ -59,6 +65,29 @@ function initSideBar() {
       closestImg.src = getIcon('directory', '', ['on', 'off'][Number(!!closestImg.src.match(/folderon/))])
     }
   })
+  // 设置上半部分（工作区）监听
+  $('#opened-view').addEventListener('click', e => {
+    e.stopPropagation()
+    const target = e.target
+    const path = target.dataset.path
+    const editor = window.editor
+    const currentOpenedFiles = getProperty('currentOpenedFiles')
+    let currentOpenedFileIndex = currentOpenedFiles.findIndex(v => v.path == getProperty('curFilePath'))
+
+    if (currentOpenedFileIndex != -1) {
+      currentOpenedFiles[currentOpenedFileIndex].buffer = editor.getValue()
+      setProperty('currentOpenedFiles', currentOpenedFiles)
+    }
+
+    setProperty('curFilePath', path)
+    currentOpenedFileIndex = currentOpenedFiles.findIndex(v => v.path == getProperty('curFilePath'))
+    if (currentOpenedFiles[currentOpenedFileIndex].buffer !== void 0) {
+      editor.setValue(currentOpenedFiles[currentOpenedFileIndex].buffer)
+    } else {
+      const fileContent = fs.readFileSync(currentOpenedFiles[currentOpenedFileIndex].path)
+      editor.setValue(fileContent)
+    }
+  })
 }
 module.exports.initSideBar = initSideBar
 
@@ -92,7 +121,9 @@ function updateSideBarHigh() {
   const currentOpenedFiles = getProperty('currentOpenedFiles')
   let res = '<ul>'
   currentOpenedFiles.forEach(file => {
-    res += `<li><img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span>${file.name}</span></li>`
+    res += `<li><img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${file.path}>${
+      file.name
+    }</span></li>`
   })
   res += '</ul>'
   $('#opened-view').innerHTML = res
@@ -104,9 +135,9 @@ module.exports.updateSideBarHigh = updateSideBarHigh
  */
 function updateSideBarLow() {
   const currentPath = getProperty('currentPath')
+  // FIXME: 打开大型目录卡死问题
   const dreeTree = dree.scan(currentPath)
   $('#current-path').innerHTML = currentPath
-
   function printTree(tree) {
     let res = ''
     if (tree) {
