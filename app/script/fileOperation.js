@@ -6,6 +6,7 @@ const { setProperty, getProperty } = require('./utils')
 const { dialog } = require('electron').remote
 const fs = require('fs')
 const path = require('path')
+const { updateSideBarHigh } = require('./sidebar')
 
 const EditorMode = {
   CCppMode: 'ace/mode/c_cpp',
@@ -24,22 +25,32 @@ const openFile = () => {
       setProperty('curFilePath', res.filePaths[0])
       if (getProperty('curFilePath')) {
         fs.readFile(getProperty('curFilePath'), 'utf8', (err, data) => {
-          editor.setValue(data)
+          let curOpenedDocs = getProperty('openedDocs')
+          curOpenedDocs.push({
+            path: getProperty('curFilePath'),
+            session: new ace.EditSession(data)
+          })
+          editor.setSession(curOpenedDocs.slice(-1)[0].session)
           editor.moveCursorTo(0)
+          switch (path.extname(getProperty('curFilePath'))) {
+            case '.c':
+            case '.cpp':
+            case '.h':
+              editor.session.setMode(EditorMode.CCppMode)
+              break
+            case '.asm':
+              editor.session.setMode(EditorMode.MipsMode)
+              break
+            default:
+              editor.session.setMode(null)
+              break
+          }
+          getProperty('currentUpPartFiles').push({
+            name: path.basename(getProperty('curFilePath')),
+            path: getProperty('curFilePath')
+          })
+          updateSideBarHigh(getProperty('curFilePath'), true)
         })
-        switch (path.extname(getProperty('curFilePath'))) {
-          case '.c':
-          case '.cpp':
-          case '.h':
-            editor.session.setMode(EditorMode.CCppMode)
-            break
-          case '.asm':
-            editor.session.setMode(EditorMode.MipsMode)
-            break
-          default:
-            editor.session.setMode(EditorMode.CCppMode) // FIXME: 应为无高亮模式
-            break
-        }
       }
     })
 }

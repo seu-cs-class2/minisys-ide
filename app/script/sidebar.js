@@ -7,13 +7,20 @@ const dree = require('dree')
 const path = require('path')
 const fs = require('fs')
 
+const EditorMode = {
+  CCppMode: 'ace/mode/c_cpp',
+  MipsMode: 'ace/mode/mips',
+}
+
 /**
  * 初始化侧边栏
  */
 function initSideBar() {
-  setProperty('currentOpenedFiles', [])
+  setProperty('openedDocs', [])
+
+  setProperty('currentUpPartFiles', [])
   $('#refresh').addEventListener('click', () => {
-    updateSideBarLow()
+    initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
   })
 
   // 设置下半部分（目录树）监听
@@ -21,15 +28,40 @@ function initSideBar() {
     e.stopPropagation()
     const target = e.target
     const dataset = target.dataset
-    const currentOpenedFiles = getProperty('currentOpenedFiles')
-    if (currentOpenedFiles.some(v => v.path == dataset.path)) return
+    const currentUpPartFiles = getProperty('currentUpPartFiles')
+    if (currentUpPartFiles.some(v => v.path == dataset.path)) return
     if (dataset.type == 'file') {
       // 更新文件开关状态
-      currentOpenedFiles.push({
+      currentUpPartFiles.push({
         path: dataset.path,
         name: dataset.name,
       })
-      updateSideBarHigh()
+      setProperty('curFilePath', dataset.path)
+      if (getProperty('curFilePath')) {
+        fs.readFile(getProperty('curFilePath'), 'utf8', (err, data) => {
+          let curOpenedDocs = getProperty('openedDocs')
+          curOpenedDocs.push({
+            path: dataset.path,
+            session: new ace.EditSession(data),
+          })
+          editor.setSession(curOpenedDocs.slice(-1)[0].session)
+          editor.moveCursorTo(0)
+          switch (path.extname(getProperty('curFilePath'))) {
+            case '.c':
+            case '.cpp':
+            case '.h':
+              editor.session.setMode(EditorMode.CCppMode)
+              break
+            case '.asm':
+              editor.session.setMode(EditorMode.MipsMode)
+              break
+            default:
+              editor.session.setMode(null)
+              break
+          }
+        })
+        updateSideBarHigh(dataset.path, true)
+      }
     } else if (dataset.type == 'directory') {
       // 更新文件夹开关状态
       /**
@@ -47,21 +79,12 @@ function initSideBar() {
         })
         return res
       }
-      const closestUL = findClosestSibling(target, 'ul', true)
-      let child = closestUL.firstChild
-      const childs = [child]
-      while (child != closestUL.lastChild) {
-        child = child.nextSibling
-        childs.push(child)
-      }
-      childs
-        .filter(node => node.nodeType == 1)
-        .forEach(v => {
-          // prettier-ignore
-          v.style.display = ({ 'none': 'block', 'block': 'none' })[v.style.display.trim() || 'block']
-        })
+      const closestUL = findClosestSibling(target, 'ul', true) // 这个目录下面文件的ul
+      // 渲染孩子
+      initSideBarLow(target.dataset['path'], closestUL)
+
       // 更新文件夹开闭图标
-      const closestImg = findClosestSibling(target, 'img', false)
+      const closestImg = findClosestSibling(target, 'img', false) // 这个目录的开闭图标
       closestImg.src = getIcon('directory', '', ['on', 'off'][Number(!!closestImg.src.match(/folderon/))])
     }
   })
@@ -69,23 +92,38 @@ function initSideBar() {
   $('#opened-view').addEventListener('click', e => {
     e.stopPropagation()
     const target = e.target
-    const path = target.dataset.path
     const editor = window.editor
-    const currentOpenedFiles = getProperty('currentOpenedFiles')
-    let currentOpenedFileIndex = currentOpenedFiles.findIndex(v => v.path == getProperty('curFilePath'))
+    console.log(target)
+    const doc = getProperty('openedDocs').find(v => v.path == target.dataset.path)
+    if (!doc) throw 'wtf'
+    console.log(doc)
+    window.debug = doc
+    editor.setSession(doc.session)
 
-    if (currentOpenedFileIndex != -1) {
-      currentOpenedFiles[currentOpenedFileIndex].buffer = editor.getValue()
-      setProperty('currentOpenedFiles', currentOpenedFiles)
+    const ul = $('#opened-view > ul')
+    let child = ul.firstChild
+    const childs = [child]
+    while (child != ul.lastChild) {
+      child = child.nextSibling
+      childs.push(child)
     }
-
-    setProperty('curFilePath', path)
-    currentOpenedFileIndex = currentOpenedFiles.findIndex(v => v.path == getProperty('curFilePath'))
-    if (currentOpenedFiles[currentOpenedFileIndex].buffer !== void 0) {
-      editor.setValue(currentOpenedFiles[currentOpenedFileIndex].buffer)
-    } else {
-      const fileContent = fs.readFileSync(currentOpenedFiles[currentOpenedFileIndex].path)
-      editor.setValue(fileContent)
+    let origin = childs.find(v => v.firstChild.nextSibling.dataset.path == getProperty('curFilePath')).firstChild
+      .nextSibling
+    origin.style.backgroundColor = ''
+    setProperty('curFilePath', target.dataset.path)
+    target.style.backgroundColor = '#4169e1'
+    switch (path.extname(getProperty('curFilePath'))) {
+      case '.c':
+      case '.cpp':
+      case '.h':
+        editor.session.setMode(EditorMode.CCppMode)
+        break
+      case '.asm':
+        editor.session.setMode(EditorMode.MipsMode)
+        break
+      default:
+        editor.session.setMode(null)
+        break
     }
   })
 }
@@ -116,12 +154,12 @@ function getIcon(type, filename, status) {
 /**
  * 更新侧边栏上半部分（已打开的文件）
  */
-function updateSideBarHigh() {
+function updateSideBarHigh(_path, defaultOpen) {
   $('#opened-view').innerHTML = ''
-  const currentOpenedFiles = getProperty('currentOpenedFiles')
+  const currentUpPartFiles = getProperty('currentUpPartFiles')
   let res = '<ul>'
-  currentOpenedFiles.forEach(file => {
-    res += `<li><img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${file.path}>${
+  currentUpPartFiles.forEach(file => {
+    res += `<li><img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${file.path} style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${
       file.name
     }</span></li>`
   })
@@ -133,37 +171,50 @@ module.exports.updateSideBarHigh = updateSideBarHigh
 /**
  * 更新侧边栏下半部分（目录树）
  */
-function updateSideBarLow() {
-  const currentPath = getProperty('currentPath')
-  // FIXME: 打开大型目录卡死问题
-  const dreeTree = dree.scan(currentPath)
-  $('#current-path').innerHTML = currentPath
-  function printTree(tree) {
-    let res = ''
-    if (tree) {
-      res += '<ul>'
-      if (tree.children)
-        for (let children of tree.children)
-          if (children.type == 'directory')
-            res += `<li>
-            <img src="${getIcon('directory', '', 'on')}" class="file-icon"></img>
+function initSideBarLow(clickedPath, dom, refresh) {
+  const dreeTree = dree.scan(clickedPath, { depth: 1 })
+  $('#current-path').innerHTML = getProperty('currentPath')
+
+  if (dom.innerHTML.trim() == '' || refresh) {
+    function printTree(tree) {
+      let res = ''
+      if (tree) {
+        if (tree.children)
+          for (let children of tree.children)
+            if (children.type == 'directory')
+              res += `<li>
+            <img src="${getIcon('directory', '', 'off')}" class="file-icon"></img>
             <span data-path="${children.path}" data-type="directory" data-name="${children.name}">
              ${children.name}
             </span>
-            ${printTree(children)}
+            <ul></ul>
             </li>`
-          else
-            res += `<li>
+            else
+              res += `<li>
             <img src="${getIcon('file', children.name)}" class="file-icon"></img>
             <span data-path="${children.path}" data-type="file" data-name="${children.name}">
               ${children.name}
-            </span>
+            </span>  
             </li>`
-      res += '</ul>'
+      }
+      return res
     }
-    return res
+    dom.innerHTML = printTree(dreeTree)
+  } else {
+    let child = dom.firstChild
+    console.log(dom)
+    const childs = [child]
+    while (child != dom.lastChild) {
+      child = child.nextSibling
+      childs.push(child)
+    }
+    childs
+      .filter(node => node.nodeType == 1)
+      .forEach(v => {
+        console.log(v)
+        // prettier-ignore
+        v.style.display = ({ 'none': 'block', 'block': 'none' })[v.style.display.trim() || 'block']
+      })
   }
-
-  $('#tree-view').innerHTML = printTree(dreeTree)
 }
-module.exports.updateSideBarLow = updateSideBarLow
+module.exports.initSideBarLow = initSideBarLow

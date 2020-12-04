@@ -3,8 +3,8 @@
 'use strict'
 
 const { app, Menu, dialog } = require('electron').remote
-const { setProperty, getProperty } = require('./utils')
-const { updateSideBarLow } = require('./sidebar')
+const { setProperty, getProperty, $ } = require('./utils')
+const { initSideBarLow } = require('./sidebar')
 const child_process = require('child_process')
 const { newFileDialog, openFileDialog, saveFileDialog } = require('./fileOperation')
 
@@ -28,7 +28,7 @@ const menuTemplate = [
           const path = (await dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] })).filePaths[0]
           if (path) {
             setProperty('currentPath', path)
-            updateSideBarLow()
+            initSideBarLow(path, $('#tree-view'), true)
           }
         },
       },
