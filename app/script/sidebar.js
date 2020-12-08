@@ -2,10 +2,12 @@
 
 'use strict'
 
+const { dialog } = require('electron').remote
 const { getProperty, setProperty, $ } = require('./utils')
 const dree = require('dree')
 const path = require('path')
 const fs = require('fs')
+const { saveSessionToFile } = require('./fileOperation')
 
 const EditorMode = {
   CCppMode: 'ace/mode/c_cpp',
@@ -17,8 +19,6 @@ const EditorMode = {
  */
 function initSideBar() {
   setProperty('openedDocs', [])
-
-  setProperty('currentUpPartFiles', [])
   $('#refresh').addEventListener('click', () => {
     initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
   })
@@ -28,44 +28,44 @@ function initSideBar() {
     e.stopPropagation()
     const target = e.target
     const dataset = target.dataset
-    const currentUpPartFiles = getProperty('currentUpPartFiles')
-    if (currentUpPartFiles.some(v => v.path == dataset.path)) return
+    let openedDocs = getProperty('openedDocs')
+    if (openedDocs.some(v => v.path == dataset.path)) return
     if (dataset.type == 'file') {
       // 更新文件开关状态
-      currentUpPartFiles.push({
+
+      let addedDoc = {
         path: dataset.path,
         name: dataset.name,
-      })
+        modified: false,
+        session: undefined,
+      }
+
       setProperty('curFilePath', dataset.path)
       if (getProperty('curFilePath')) {
         fs.readFile(getProperty('curFilePath'), 'utf8', (err, data) => {
-          let curOpenedDocs = getProperty('openedDocs')
-          let addedSession = new ace.EditSession(data)
-          addedSession.on('change', e => {
-            curOpenedDocs.find(v => v.path == dataset.path).modified = true
+          addedDoc.session = new ace.EditSession(data)
+          addedDoc.session.on('change', e => {
+            openedDocs.find(v => v.path == dataset.path).modified = true
           })
-          curOpenedDocs.push({
-            path: dataset.path,
-            modified: false,
-            session: addedSession,
-          })
-          editor.setSession(curOpenedDocs.slice(-1)[0].session)
-          editor.moveCursorTo(0)
           switch (path.extname(getProperty('curFilePath'))) {
             case '.c':
             case '.cpp':
             case '.h':
-              editor.session.setMode(EditorMode.CCppMode)
+              addedDoc.session.setMode(EditorMode.CCppMode)
               break
             case '.asm':
-              editor.session.setMode(EditorMode.MipsMode)
+              addedDoc.session.setMode(EditorMode.MipsMode)
               break
             default:
-              editor.session.setMode(null)
+              addedDoc.session.setMode(null)
               break
           }
+          openedDocs.push(addedDoc)
+          // console.log(openedDocs)
+          updateSideBarHigh(dataset.path, true)
+          editor.setSession(openedDocs.slice(-1)[0].session)
+          editor.moveCursorTo(0)
         })
-        updateSideBarHigh(dataset.path, true)
       }
     } else if (dataset.type == 'directory') {
       // 更新文件夹开关状态
@@ -99,11 +99,45 @@ function initSideBar() {
     const target = e.target
     const editor = window.editor
     let doc
-    console.log(e)
+    // console.log(e)
     switch (target.className) {
       case 'close-icon':
-        doc = getProperty('openedDocs').find(v => v.path == target.parentNode.lastChild.dataset.path)
-        console.log(doc.modified)
+        let openedDocs = getProperty('openedDocs')
+        doc = openedDocs.find(v => v.path == target.parentNode.lastChild.dataset.path)
+        // console.log(doc)
+        if (doc.modified) {
+          dialog
+            .showMessageBox({
+              type: 'info',
+              title: '提示',
+              message: '你有尚未保存的改动，确定要退出吗？',
+              buttons: ['不保存并退出', '保存并退出', '取消'],
+              noLink: true,
+            })
+            .then(res => {
+              console.log(res)
+              if (res == 1) {
+                saveSessionToFile(doc.session, doc.path)
+                console.log('saved')
+              }
+              if (res != 2) {
+                setProperty(
+                  'openedDocs',
+                  getProperty('openedDocs').filter(v => v.path != doc.path)
+                )
+                console.log('nosaved')
+              }
+            })
+        } else {
+          setProperty(
+            'openedDocs',
+            getProperty('openedDocs').filter(v => v.path != doc.path)
+          )
+        }
+        if (getProperty('curFilePath') == doc.path) {
+          updateSideBarHigh(getProperty('openedDocs')[0].path, true)
+          editor.setSession(getProperty('openedDocs')[0].session)
+        } else updateSideBarHigh(getProperty('curFilePath'), true)
         break
       default:
         doc = getProperty('openedDocs').find(v => v.path == target.dataset.path)
@@ -156,9 +190,9 @@ function getIcon(type, filename, status) {
  */
 function updateSideBarHigh(_path, defaultOpen) {
   $('#opened-view').innerHTML = ''
-  const currentUpPartFiles = getProperty('currentUpPartFiles')
+  const openedDocs = getProperty('openedDocs')
   let res = '<ul>'
-  currentUpPartFiles.forEach(file => {
+  openedDocs.forEach(file => {
     res += `<li>
     <img src="../../asset/close_icon.png" class="close-icon"/>
     <img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${
