@@ -9,6 +9,7 @@ const path = require('path')
 const fs = require('fs')
 const { saveSessionToFile } = require('./fileOperation')
 const { Session } = require('inspector')
+const prompt = require('electron-prompt')
 
 const EditorMode = {
   CCppMode: 'ace/mode/c_cpp',
@@ -22,6 +23,39 @@ function initSideBar() {
   setProperty('openedDocs', [])
   $('#refresh').addEventListener('click', () => {
     initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
+  })
+
+  $('#newFile').addEventListener('click', async () => {
+    if (getProperty('currentPath')) {
+      let fileName = await prompt({
+        title: 'Please...',
+        label: 'File Name:',
+        value: '新建文件',
+      })
+      try {
+        fs.statSync(`${getProperty('currentPath')}/${fileName}`)
+        dialog.showErrorBox('Error', 'Duplicate file name.')
+      } catch (e) {
+        fs.writeFile(`${getProperty('currentPath')}/${fileName}`, '', err => {
+          err && dialog.showErrorBox('Error', 'Duplicate file name.')
+        })
+      }
+      initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
+    }
+  })
+
+  $('#newFolder').addEventListener('click', async () => {
+    if (getProperty('currentPath')) {
+      let folderName = await prompt({
+        title: 'Please...',
+        label: 'Folder Name:',
+        value: '新建文件夹',
+      })
+      fs.mkdir(`${getProperty('currentPath')}/${folderName}`, err => {
+        err && dialog.showErrorBox('Error', 'Duplicate folder name.')
+      })
+      initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
+    }
   })
 
   // 设置下半部分（目录树）监听
@@ -48,7 +82,7 @@ function initSideBar() {
           addedDoc.session.on('change', e => {
             if (openedDocs.find(v => v.path == dataset.path).modified == false) {
               openedDocs.find(v => v.path == dataset.path).modified = true
-              updateSideBarHigh(getProperty('curFilePath'),true)
+              updateSideBarHigh(getProperty('curFilePath'), true)
             }
           })
           switch (path.extname(getProperty('curFilePath'))) {

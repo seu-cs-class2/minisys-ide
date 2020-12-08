@@ -29,6 +29,7 @@ const menuTemplate = [
           if (path) {
             setProperty('currentPath', path)
             initSideBarLow(path, $('#tree-view'), true)
+            document.title=getProperty('currentPath')+'-Minisys IDE'
           }
         },
       },
