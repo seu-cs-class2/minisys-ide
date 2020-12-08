@@ -24,7 +24,7 @@ fs.readFile(jsonPath, 'utf8', (err, data) => {
     appSettings = JSON.parse(data)
     editor.setTheme('ace/theme/' + appSettings.theme)
     // 设置语法高亮模式
-    editor.session.setMode('ace/mode/' + appSettings.hightlight_mode)
+    editor.session.setMode(null)
     editor.setFontSize(appSettings.font_size)
     // 设置选中行高亮
     editor.setHighlightActiveLine(true)

@@ -17,7 +17,7 @@ const themeTable = ['ambiance', 'chaos', 'chrome', 'xcode', 'vibrant_ink', 'term
 // 读取配置，初始化菜单选项
 fs.readFile(jsonPath, 'utf8', (err, data) => {
   if (err) {
-    console.log(err)
+    console.error(err)
     dialog.showMessageBox({
       type: 'error',
       title: '错误',
@@ -42,7 +42,7 @@ $('#btn-confirm').onclick = function () {
   appSettings.theme = themeDOM.options[themeDOM.selectedIndex].value
   fs.writeFile(jsonPath, JSON.stringify(appSettings, null, 2), async err => {
     if (err) {
-      console.log(err)
+      console.error(err)
       dialog.showMessageBox({
         type: 'error',
         title: '错误',

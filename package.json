@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "dree": "^2.4.16",
-    "electron": "^10.1.3"
+    "electron": "^10.1.3",
+    "electron-prompt": "^1.6.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
