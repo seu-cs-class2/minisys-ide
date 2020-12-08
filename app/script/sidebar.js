@@ -8,6 +8,7 @@ const dree = require('dree')
 const path = require('path')
 const fs = require('fs')
 const { saveSessionToFile } = require('./fileOperation')
+const { Session } = require('inspector')
 
 const EditorMode = {
   CCppMode: 'ace/mode/c_cpp',
@@ -45,7 +46,10 @@ function initSideBar() {
         fs.readFile(getProperty('curFilePath'), 'utf8', (err, data) => {
           addedDoc.session = new ace.EditSession(data)
           addedDoc.session.on('change', e => {
-            openedDocs.find(v => v.path == dataset.path).modified = true
+            if (openedDocs.find(v => v.path == dataset.path).modified == false) {
+              openedDocs.find(v => v.path == dataset.path).modified = true
+              updateSideBarHigh(getProperty('curFilePath'),true)
+            }
           })
           switch (path.extname(getProperty('curFilePath'))) {
             case '.c':
@@ -115,29 +119,51 @@ function initSideBar() {
               noLink: true,
             })
             .then(res => {
-              console.log(res)
-              if (res == 1) {
+              // console.log(res.response)
+              if (res.response == 1) {
+                // console.log(doc.session.getValue())
                 saveSessionToFile(doc.session, doc.path)
-                console.log('saved')
+                // console.log('saved')
               }
-              if (res != 2) {
+              if (res.response != 2) {
                 setProperty(
                   'openedDocs',
                   getProperty('openedDocs').filter(v => v.path != doc.path)
                 )
-                console.log('nosaved')
+                // console.log(getProperty('openedDocs'))
               }
+              if (getProperty('curFilePath') == doc.path) {
+                let openedDocs = getProperty('openedDocs')
+                if (openedDocs.length > 1) {
+                  updateSideBarHigh(openedDocs[0].path, true)
+                  editor.setSession(openedDocs[0].session)
+                  setProperty('curFilePath', openedDocs[0].path)
+                } else {
+                  updateSideBarHigh('', false)
+                  editor.setValue('')
+                  setProperty('curFilePath', '')
+                }
+              } else updateSideBarHigh(getProperty('curFilePath'), true)
             })
         } else {
           setProperty(
             'openedDocs',
             getProperty('openedDocs').filter(v => v.path != doc.path)
           )
+          // console.log(getProperty('openedDocs'))
+          if (getProperty('curFilePath') == doc.path) {
+            let openedDocs = getProperty('openedDocs')
+            if (openedDocs.length > 1) {
+              updateSideBarHigh(openedDocs[0].path, true)
+              editor.setSession(openedDocs[0].session)
+              setProperty('curFilePath', openedDocs[0].path)
+            } else {
+              updateSideBarHigh('', false)
+              editor.setValue('')
+              setProperty('curFilePath', '')
+            }
+          } else updateSideBarHigh(getProperty('curFilePath'), true)
         }
-        if (getProperty('curFilePath') == doc.path) {
-          updateSideBarHigh(getProperty('openedDocs')[0].path, true)
-          editor.setSession(getProperty('openedDocs')[0].session)
-        } else updateSideBarHigh(getProperty('curFilePath'), true)
         break
       default:
         doc = getProperty('openedDocs').find(v => v.path == target.dataset.path)
@@ -197,7 +223,9 @@ function updateSideBarHigh(_path, defaultOpen) {
     <img src="../../asset/close_icon.png" class="close-icon"/>
     <img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${
       file.path
-    } style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${file.name}</span></li>`
+    } style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${
+      (file.modified ? '*' : '') + file.name
+    }</span></li>`
   })
   res += '</ul>'
   $('#opened-view').innerHTML = res
