@@ -8,6 +8,8 @@ const { initSideBarLow } = require('./sidebar')
 const child_process = require('child_process')
 const { newFileDialog, openFileDialog, saveFileDialog } = require('./fileOperation')
 
+const editor = window.editor
+
 const menuTemplate = [
   {
     label: '文件',
@@ -29,7 +31,7 @@ const menuTemplate = [
           if (path) {
             setProperty('currentPath', path)
             initSideBarLow(path, $('#tree-view'), true)
-            document.title=getProperty('currentPath')+'-Minisys IDE'
+            document.title = getProperty('currentPath') + ' - Minisys IDE'
           }
         },
       },
@@ -40,7 +42,7 @@ const menuTemplate = [
         label: '保存',
         accelerator: 'ctrl+s',
         click: () => {
-          !getProperty('curFilePath') ? newFileDialog('保存为')() : saveFileDialog()
+          !getProperty('currentFilePath') ? newFileDialog('保存为')() : saveFileDialog()
         },
       },
       {
@@ -172,11 +174,17 @@ const menuTemplate = [
       },
       {
         label: '关于',
+        click: () => {
+          child_process.exec(`start https://github.com/seu-cs-class2/minisys-ide/blob/master/README.md`)
+        },
       },
     ],
   },
 ]
 
+/**
+ * 初始化上部菜单栏
+ */
 function initMainMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate))
 }

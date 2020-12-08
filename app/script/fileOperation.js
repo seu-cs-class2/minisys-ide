@@ -2,16 +2,11 @@
 
 'use strict'
 
-const { setProperty, getProperty } = require('./utils')
+const { setProperty, getProperty, getHighlightMode } = require('./utils')
 const { dialog } = require('electron').remote
 const fs = require('fs')
 const path = require('path')
 const { updateSideBarHigh } = require('./sidebar')
-
-const EditorMode = {
-  CCppMode: 'ace/mode/c_cpp',
-  MipsMode: 'ace/mode/mips',
-}
 
 /**
  * 打开文件
@@ -25,26 +20,15 @@ const openFile = () => {
       setProperty('curFilePath', res.filePaths[0])
       if (getProperty('curFilePath')) {
         fs.readFile(getProperty('curFilePath'), 'utf8', (err, data) => {
-          let curOpenedDocs = getProperty('openedDocs')
-          curOpenedDocs.push({
+          const openedDocs = getProperty('openedDocs')
+          openedDocs.push({
             path: getProperty('curFilePath'),
             session: new ace.EditSession(data),
           })
-          editor.setSession(curOpenedDocs.slice(-1)[0].session)
+
+          editor.session.setMode(getHighlightMode(path.extname(getProperty('curFilePath'))))
+          editor.setSession(openedDocs.slice(-1)[0].session)
           editor.moveCursorTo(0)
-          switch (path.extname(getProperty('curFilePath'))) {
-            case '.c':
-            case '.cpp':
-            case '.h':
-              editor.session.setMode(EditorMode.CCppMode)
-              break
-            case '.asm':
-              editor.session.setMode(EditorMode.MipsMode)
-              break
-            default:
-              editor.session.setMode(null)
-              break
-          }
           getProperty('currentUpPartFiles').push({
             name: path.basename(getProperty('curFilePath')),
             path: getProperty('curFilePath'),
@@ -97,7 +81,7 @@ const newFile = title => {
         if (res.filePath) {
           fs.writeFile(res.filePath, editor.getValue(), 'utf8', err => {
             if (err) {
-              console.log(err)
+              console.error(err)
             } else {
               dialog
                 .showMessageBox({
