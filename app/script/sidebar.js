@@ -40,9 +40,14 @@ function initSideBar() {
       if (getProperty('curFilePath')) {
         fs.readFile(getProperty('curFilePath'), 'utf8', (err, data) => {
           let curOpenedDocs = getProperty('openedDocs')
+          let addedSession = new ace.EditSession(data)
+          addedSession.on('change', e => {
+            curOpenedDocs.find(v => v.path == dataset.path).modified = true
+          })
           curOpenedDocs.push({
             path: dataset.path,
-            session: new ace.EditSession(data),
+            modified: false,
+            session: addedSession,
           })
           editor.setSession(curOpenedDocs.slice(-1)[0].session)
           editor.moveCursorTo(0)
@@ -93,36 +98,31 @@ function initSideBar() {
     e.stopPropagation()
     const target = e.target
     const editor = window.editor
-    console.log(target)
-    const doc = getProperty('openedDocs').find(v => v.path == target.dataset.path)
-    if (!doc) throw 'wtf'
-    console.log(doc)
-    window.debug = doc
-    editor.setSession(doc.session)
-
-    const ul = $('#opened-view > ul')
-    let child = ul.firstChild
-    const childs = [child]
-    while (child != ul.lastChild) {
-      child = child.nextSibling
-      childs.push(child)
-    }
-    let origin = childs.find(v => v.firstChild.nextSibling.dataset.path == getProperty('curFilePath')).firstChild
-      .nextSibling
-    origin.style.backgroundColor = ''
-    setProperty('curFilePath', target.dataset.path)
-    target.style.backgroundColor = '#4169e1'
-    switch (path.extname(getProperty('curFilePath'))) {
-      case '.c':
-      case '.cpp':
-      case '.h':
-        editor.session.setMode(EditorMode.CCppMode)
-        break
-      case '.asm':
-        editor.session.setMode(EditorMode.MipsMode)
+    let doc
+    console.log(e)
+    switch (target.className) {
+      case 'close-icon':
+        doc = getProperty('openedDocs').find(v => v.path == target.parentNode.lastChild.dataset.path)
+        console.log(doc.modified)
         break
       default:
-        editor.session.setMode(null)
+        doc = getProperty('openedDocs').find(v => v.path == target.dataset.path)
+        if (!doc) throw 'wtf'
+        //console.log(doc)
+        // window.debug = doc
+        editor.setSession(doc.session)
+
+        const ul = $('#opened-view > ul')
+        let child = ul.firstChild
+        const childs = [child]
+        while (child != ul.lastChild) {
+          child = child.nextSibling
+          childs.push(child)
+        }
+        let origin = childs.find(v => v.lastChild.dataset.path == getProperty('curFilePath')).lastChild
+        origin.style.backgroundColor = ''
+        setProperty('curFilePath', target.dataset.path)
+        target.style.backgroundColor = '#4169e1'
         break
     }
   })
@@ -159,9 +159,11 @@ function updateSideBarHigh(_path, defaultOpen) {
   const currentUpPartFiles = getProperty('currentUpPartFiles')
   let res = '<ul>'
   currentUpPartFiles.forEach(file => {
-    res += `<li><img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${file.path} style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${
-      file.name
-    }</span></li>`
+    res += `<li>
+    <img src="../../asset/close_icon.png" class="close-icon"/>
+    <img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${
+      file.path
+    } style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${file.name}</span></li>`
   })
   res += '</ul>'
   $('#opened-view').innerHTML = res
@@ -194,7 +196,7 @@ function initSideBarLow(clickedPath, dom, refresh) {
             <img src="${getIcon('file', children.name)}" class="file-icon"></img>
             <span data-path="${children.path}" data-type="file" data-name="${children.name}">
               ${children.name}
-            </span>  
+            </span>
             </li>`
       }
       return res
