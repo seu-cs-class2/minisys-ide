@@ -28,7 +28,7 @@ const openFile = () => {
           let curOpenedDocs = getProperty('openedDocs')
           curOpenedDocs.push({
             path: getProperty('curFilePath'),
-            session: new ace.EditSession(data)
+            session: new ace.EditSession(data),
           })
           editor.setSession(curOpenedDocs.slice(-1)[0].session)
           editor.moveCursorTo(0)
@@ -47,7 +47,7 @@ const openFile = () => {
           }
           getProperty('currentUpPartFiles').push({
             name: path.basename(getProperty('curFilePath')),
-            path: getProperty('curFilePath')
+            path: getProperty('curFilePath'),
           })
           updateSideBarHigh(getProperty('curFilePath'), true)
         })
@@ -77,7 +77,7 @@ const saveFile = () => {
     dialog.showMessageBox({
       type: 'info',
       title: '提示',
-      message: '保存成功！',
+      message: '保存失败！',
       button: ['确定'],
     })
   }
@@ -117,3 +117,11 @@ const newFile = title => {
   }
 }
 module.exports.newFileDialog = newFile
+
+const saveSessionToFile = (session, path) => {
+  fs.writeFile(path, session.getValue(), 'utf8', err => {
+    console.error(err)
+  })
+}
+
+module.exports.saveSessionToFile = saveSessionToFile

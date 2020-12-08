@@ -2,10 +2,13 @@
 
 'use strict'
 
+const { dialog } = require('electron').remote
 const { getProperty, setProperty, $ } = require('./utils')
 const dree = require('dree')
 const path = require('path')
 const fs = require('fs')
+const { saveSessionToFile } = require('./fileOperation')
+const { Session } = require('inspector')
 
 const EditorMode = {
   CCppMode: 'ace/mode/c_cpp',
@@ -17,8 +20,6 @@ const EditorMode = {
  */
 function initSideBar() {
   setProperty('openedDocs', [])
-
-  setProperty('currentUpPartFiles', [])
   $('#refresh').addEventListener('click', () => {
     initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
   })
@@ -28,39 +29,47 @@ function initSideBar() {
     e.stopPropagation()
     const target = e.target
     const dataset = target.dataset
-    const currentUpPartFiles = getProperty('currentUpPartFiles')
-    if (currentUpPartFiles.some(v => v.path == dataset.path)) return
+    let openedDocs = getProperty('openedDocs')
+    if (openedDocs.some(v => v.path == dataset.path)) return
     if (dataset.type == 'file') {
       // 更新文件开关状态
-      currentUpPartFiles.push({
+
+      let addedDoc = {
         path: dataset.path,
         name: dataset.name,
-      })
+        modified: false,
+        session: undefined,
+      }
+
       setProperty('curFilePath', dataset.path)
       if (getProperty('curFilePath')) {
         fs.readFile(getProperty('curFilePath'), 'utf8', (err, data) => {
-          let curOpenedDocs = getProperty('openedDocs')
-          curOpenedDocs.push({
-            path: dataset.path,
-            session: new ace.EditSession(data),
+          addedDoc.session = new ace.EditSession(data)
+          addedDoc.session.on('change', e => {
+            if (openedDocs.find(v => v.path == dataset.path).modified == false) {
+              openedDocs.find(v => v.path == dataset.path).modified = true
+              updateSideBarHigh(getProperty('curFilePath'),true)
+            }
           })
-          editor.setSession(curOpenedDocs.slice(-1)[0].session)
-          editor.moveCursorTo(0)
           switch (path.extname(getProperty('curFilePath'))) {
             case '.c':
             case '.cpp':
             case '.h':
-              editor.session.setMode(EditorMode.CCppMode)
+              addedDoc.session.setMode(EditorMode.CCppMode)
               break
             case '.asm':
-              editor.session.setMode(EditorMode.MipsMode)
+              addedDoc.session.setMode(EditorMode.MipsMode)
               break
             default:
-              editor.session.setMode(null)
+              addedDoc.session.setMode(null)
               break
           }
+          openedDocs.push(addedDoc)
+          // console.log(openedDocs)
+          updateSideBarHigh(dataset.path, true)
+          editor.setSession(openedDocs.slice(-1)[0].session)
+          editor.moveCursorTo(0)
         })
-        updateSideBarHigh(dataset.path, true)
       }
     } else if (dataset.type == 'directory') {
       // 更新文件夹开关状态
@@ -93,36 +102,87 @@ function initSideBar() {
     e.stopPropagation()
     const target = e.target
     const editor = window.editor
-    console.log(target)
-    const doc = getProperty('openedDocs').find(v => v.path == target.dataset.path)
-    if (!doc) throw 'wtf'
-    console.log(doc)
-    window.debug = doc
-    editor.setSession(doc.session)
-
-    const ul = $('#opened-view > ul')
-    let child = ul.firstChild
-    const childs = [child]
-    while (child != ul.lastChild) {
-      child = child.nextSibling
-      childs.push(child)
-    }
-    let origin = childs.find(v => v.firstChild.nextSibling.dataset.path == getProperty('curFilePath')).firstChild
-      .nextSibling
-    origin.style.backgroundColor = ''
-    setProperty('curFilePath', target.dataset.path)
-    target.style.backgroundColor = '#4169e1'
-    switch (path.extname(getProperty('curFilePath'))) {
-      case '.c':
-      case '.cpp':
-      case '.h':
-        editor.session.setMode(EditorMode.CCppMode)
-        break
-      case '.asm':
-        editor.session.setMode(EditorMode.MipsMode)
+    let doc
+    // console.log(e)
+    switch (target.className) {
+      case 'close-icon':
+        let openedDocs = getProperty('openedDocs')
+        doc = openedDocs.find(v => v.path == target.parentNode.lastChild.dataset.path)
+        // console.log(doc)
+        if (doc.modified) {
+          dialog
+            .showMessageBox({
+              type: 'info',
+              title: '提示',
+              message: '你有尚未保存的改动，确定要退出吗？',
+              buttons: ['不保存并退出', '保存并退出', '取消'],
+              noLink: true,
+            })
+            .then(res => {
+              // console.log(res.response)
+              if (res.response == 1) {
+                // console.log(doc.session.getValue())
+                saveSessionToFile(doc.session, doc.path)
+                // console.log('saved')
+              }
+              if (res.response != 2) {
+                setProperty(
+                  'openedDocs',
+                  getProperty('openedDocs').filter(v => v.path != doc.path)
+                )
+                // console.log(getProperty('openedDocs'))
+              }
+              if (getProperty('curFilePath') == doc.path) {
+                let openedDocs = getProperty('openedDocs')
+                if (openedDocs.length > 1) {
+                  updateSideBarHigh(openedDocs[0].path, true)
+                  editor.setSession(openedDocs[0].session)
+                  setProperty('curFilePath', openedDocs[0].path)
+                } else {
+                  updateSideBarHigh('', false)
+                  editor.setValue('')
+                  setProperty('curFilePath', '')
+                }
+              } else updateSideBarHigh(getProperty('curFilePath'), true)
+            })
+        } else {
+          setProperty(
+            'openedDocs',
+            getProperty('openedDocs').filter(v => v.path != doc.path)
+          )
+          // console.log(getProperty('openedDocs'))
+          if (getProperty('curFilePath') == doc.path) {
+            let openedDocs = getProperty('openedDocs')
+            if (openedDocs.length > 1) {
+              updateSideBarHigh(openedDocs[0].path, true)
+              editor.setSession(openedDocs[0].session)
+              setProperty('curFilePath', openedDocs[0].path)
+            } else {
+              updateSideBarHigh('', false)
+              editor.setValue('')
+              setProperty('curFilePath', '')
+            }
+          } else updateSideBarHigh(getProperty('curFilePath'), true)
+        }
         break
       default:
-        editor.session.setMode(null)
+        doc = getProperty('openedDocs').find(v => v.path == target.dataset.path)
+        if (!doc) throw 'wtf'
+        //console.log(doc)
+        // window.debug = doc
+        editor.setSession(doc.session)
+
+        const ul = $('#opened-view > ul')
+        let child = ul.firstChild
+        const childs = [child]
+        while (child != ul.lastChild) {
+          child = child.nextSibling
+          childs.push(child)
+        }
+        let origin = childs.find(v => v.lastChild.dataset.path == getProperty('curFilePath')).lastChild
+        origin.style.backgroundColor = ''
+        setProperty('curFilePath', target.dataset.path)
+        target.style.backgroundColor = '#4169e1'
         break
     }
   })
@@ -156,11 +216,15 @@ function getIcon(type, filename, status) {
  */
 function updateSideBarHigh(_path, defaultOpen) {
   $('#opened-view').innerHTML = ''
-  const currentUpPartFiles = getProperty('currentUpPartFiles')
+  const openedDocs = getProperty('openedDocs')
   let res = '<ul>'
-  currentUpPartFiles.forEach(file => {
-    res += `<li><img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${file.path} style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${
-      file.name
+  openedDocs.forEach(file => {
+    res += `<li>
+    <img src="../../asset/close_icon.png" class="close-icon"/>
+    <img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${
+      file.path
+    } style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${
+      (file.modified ? '*' : '') + file.name
     }</span></li>`
   })
   res += '</ul>'
@@ -194,7 +258,7 @@ function initSideBarLow(clickedPath, dom, refresh) {
             <img src="${getIcon('file', children.name)}" class="file-icon"></img>
             <span data-path="${children.path}" data-type="file" data-name="${children.name}">
               ${children.name}
-            </span>  
+            </span>
             </li>`
       }
       return res

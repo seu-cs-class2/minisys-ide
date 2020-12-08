@@ -7,7 +7,7 @@ const remote = require('electron').remote
 const { Menu } = remote
 const editorContextmenu = $('#editor')
 
-const contextMenu = [
+let contextMenu = [
   {
     label: '全选',
     accelerator: 'ctrl+a',
@@ -30,9 +30,10 @@ const contextMenu = [
   },
 ]
 
-const menu = Menu.buildFromTemplate(contextMenu)
+let menu = Menu.buildFromTemplate(contextMenu)
 
 editorContextmenu.addEventListener('contextmenu', e => {
   e.preventDefault()
   menu.popup({ window: remote.getCurrentWindow() })
 })
+//editor内的右键菜单
