@@ -142,15 +142,16 @@ function initSideBar() {
     let doc
 
     function removeSessionHandler(doc) {
-      const openedDocs = getProperty('openedDocs')
+      let openedDocs = getProperty('openedDocs')
       // 不是取消，则从已打开的doc列表中去掉它
       setProperty(
         'openedDocs',
         openedDocs.filter(v => v.path != doc.path)
       )
+      openedDocs = getProperty('openedDocs')
       // 如果关的刚好是当前正在看的，则要换一个文件来显示
       if (getProperty('currentFilePath') == doc.path) {
-        if (openedDocs.length > 1) {
+        if (openedDocs.length >= 1) {
           // 取第一个文件来显示
           updateSideBarHigh(openedDocs[0].path, true)
           editor.setSession(openedDocs[0].session)

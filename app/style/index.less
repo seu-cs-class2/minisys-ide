@@ -108,3 +108,30 @@ body {
     height: 16px;
   }
 }
+
+#console {
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  box-shadow: 4px 4px 13px -3px rgba(0, 0, 0, 0.10196);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  align-items: left;
+  justify-content: center;
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+  #output {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    resize: none;
+  }
+  #btn-rubbish {
+    float: right;
+    margin-right: 10px;
+  }
+}
