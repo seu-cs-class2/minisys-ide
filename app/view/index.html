@@ -26,9 +26,24 @@
         <div style="border-bottom: 3px solid gray; width: 720px; position: absolute; left: 0"></div>
         <div style="margin-bottom: 10px"></div>
         <div style="position: absolute; left: 10px">
-          <img src="../../asset/refresh_low_icon.png" id="refresh" title="刷新" style="width: 16px; height: auto; margin-right: 5px;" />
-          <img src="../../asset/newFile_low_icon.png" id="newFile" title="新建文件" style="width: 16px; height: auto; margin-right: 5px;" />
-          <img src="../../asset/newFolder_low_icon.png" id="newFolder" title="新建文件夹" style="width: 16px; height: auto; margin-right: 5px;" />
+          <img
+            src="../../asset/refresh_low_icon.png"
+            id="refresh"
+            title="刷新"
+            style="width: 16px; height: auto; margin-right: 5px"
+          />
+          <img
+            src="../../asset/newFile_low_icon.png"
+            id="newFile"
+            title="新建文件"
+            style="width: 16px; height: auto; margin-right: 5px"
+          />
+          <img
+            src="../../asset/newFolder_low_icon.png"
+            id="newFolder"
+            title="新建文件夹"
+            style="width: 16px; height: auto; margin-right: 5px"
+          />
         </div>
         <div style="margin-top: 30px"></div>
         <span id="current-path">未打开任何目录</span>
@@ -36,11 +51,25 @@
       </div>
       <div id="editor"></div>
     </div>
+    <div id="console">
+      <div>
+        <img src="../../asset/close_icon.png" class="icon" id="btn-exit"/>
+        <span>终端输出：</span>
+        <img src="../../asset/rubbishbin_icon.png" class="icon" id="btn-rubbish"/>
+      </div>
+      <textarea name="output" id="output" cols="65" rows="15" readonly></textarea>
+    </div>
   </body>
   <script src="../../lib/ace/ace.js"></script>
   <script src="../../lib/ace/ext-language_tools.js"></script>
   <script>
     require('../script/initAll.js')
+    document.querySelector('#btn-exit').onclick = () => {
+      document.querySelector('#console').style.display = 'none'
+    }
+    document.querySelector('#btn-rubbish').onclick = () => {
+      document.querySelector('#output').value = ''
+    }
     require('../script/editor.js')
     require('../script/contextmenu.js')
   </script>
