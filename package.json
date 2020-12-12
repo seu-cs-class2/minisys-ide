@@ -12,8 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "dree": "^2.4.16",
-    "electron-prompt": "^1.6.0",
-    "serialport": "^9.0.3"
+    "electron-prompt": "^1.6.0"
   },
   "devDependencies": {
     "electron": "^10.1.3",
