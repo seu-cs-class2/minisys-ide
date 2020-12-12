@@ -40,7 +40,7 @@ document.querySelectorAll('.btn-path').forEach(
           filters: [
             {
               name: 'js文件',
-              extensions: ['.js'],
+              extensions: ['js'],
             },
           ],
         })
