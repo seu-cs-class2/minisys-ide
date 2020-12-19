@@ -233,9 +233,9 @@ function updateSideBarHigh(_path, defaultOpen) {
   openedDocs.forEach(file => {
     res += `<li>
     <img src="../../asset/close_icon.png" class="close-icon"/>
-    <img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path=${
+    <img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path="${
       file.path
-    } style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${
+    }" style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${
       (file.modified ? '* ' : '') + file.name
     }</span></li>`
   })
