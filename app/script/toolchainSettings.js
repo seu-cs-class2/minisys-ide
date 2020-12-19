@@ -47,9 +47,9 @@ document.querySelectorAll('.btn-path').forEach(
         .then(res => {
           if (res.filePaths[0]) {
             if (v.id == 'btn-compiler-path') {
-              compilerPathDOM.innerHTML = res.filePaths[0]
+              compilerPathDOM.value = res.filePaths[0]
             } else if (v.id == 'btn-assembler-path') {
-              assemblerPathDOM.innerHTML = res.filePaths[0]
+              assemblerPathDOM.value = res.filePaths[0]
             }
           }
         })

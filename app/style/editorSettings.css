@@ -57,9 +57,9 @@ html {
 }
 .options .btn-xx {
   margin-bottom: 48px;
-  margin-left: 24px;
-  margin-right: 24px;
-  width: 120px;
-  height: 64px;
-  font-size: 24px;
+  margin-left: 16px;
+  margin-right: 16px;
+  width: 90px;
+  height: 48px;
+  font-size: 16px;
 }

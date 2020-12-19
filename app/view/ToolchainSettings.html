@@ -11,19 +11,27 @@
       <img draggable="false" src="../../asset/settings_icon.png" id="logo" />
       <span id="title">工具链配置</span>
     </div>
+    <div style="margin-top: 10px;"></div>
     <div class="options">
       <div class="ribbon">
-        <label id="label" for="input"
-          >编译器路径：
-          <div id="input" name="compiler-path"></div>
-          <button class="btn-path" id="btn-compiler-path">选择文件</button>
+        <label for="input"
+          ><span id="label">编译器：</span>
+          <textarea name="compiler-path" id="input" cols="45" rows="1" readonly></textarea>
+          <button class="btn-path" id="btn-compiler-path">浏览..</button>
         </label>
       </div>
       <div class="ribbon">
-        <label id="label" for="input"
-          >汇编器路径：
-          <div id="input" name="assembler-path"></div>
-          <button class="btn-path" id="btn-assembler-path">选择文件</button>
+        <label for="input"
+          ><span id="label">汇编器：</span>
+          <textarea name="assembler-path" id="input" cols="45" rows="1" readonly></textarea>
+          <button class="btn-path" id="btn-assembler-path">浏览..</button>
+        </label>
+      </div>
+      <div class="ribbon">
+        <label for="input"
+          ><span id="label">串口工具：</span>
+          <textarea name="serialport-path" id="input" cols="45" rows="1" readonly></textarea>
+          <button class="btn-path" id="btn-serialport-path">浏览..</button>
         </label>
       </div>
       <button class="btn-xx" id="btn-confirm">确认修改</button>

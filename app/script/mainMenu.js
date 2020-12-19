@@ -145,7 +145,7 @@ const menuTemplate = [
             )
             fs.mkdirSync(assemblerOutputPath)
             invokeAssembler(asmOutputFile, assemblerOutputPath)
-            //TODO:还没加入烧录
+            // TODO:还没加入烧录
           } else {
             dialog.showMessageBox({
               type: 'error',
@@ -200,13 +200,13 @@ const menuTemplate = [
       {
         label: '编辑器设置',
         click: () => {
-          window.open('./EditorSettings.html', '_blank', 'width=400,height=300,left=25%,frame=false,resizable=false')
+          window.open('./EditorSettings.html', '_blank', 'width=400,height=290,left=25%,frame=false,resizable=false')
         },
       },
       {
         label: '工具链设置',
         click: () => {
-          window.open('./ToolchainSettings.html', '_blank', 'width=600,height=300,left=25%,frame=false,resizable=false')
+          window.open('./ToolchainSettings.html', '_blank', 'width=600,height=290,left=25%,frame=false,resizable=false')
         },
       },
       {
