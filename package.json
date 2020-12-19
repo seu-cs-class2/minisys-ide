@@ -1,7 +1,7 @@
 {
   "name": "minisys-ide",
   "version": "1.1.0",
-  "description": "",
+  "description": "Minisys IDE",
   "main": "app.js",
   "scripts": {
     "dev": "set NODE_ENV=development && electron .",
@@ -9,7 +9,10 @@
     "build": "electron-builder --win --x64"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/seu-cs-class2/minisys-ide"
+  },
   "dependencies": {
     "dree": "^2.4.16",
     "electron-prompt": "^1.6.0"
