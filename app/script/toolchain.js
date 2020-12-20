@@ -29,7 +29,7 @@ module.exports.invokeCompiler = function (sourceFilePath, outputPath) {
         toolchainSettings = JSON.parse(data)
         if (path.extname(sourceFilePath) == '.c') {
           let emiter = child_process.exec(
-            `node ${toolchainSettings.compiler_path} ${sourceFilePath} -v -i -o ${outputPath}`,
+            `node ${toolchainSettings.compiler_path} "${sourceFilePath}" -v -i -o "${outputPath}"`,
             () => {
               $('#output').value += '\n'
             }
@@ -81,7 +81,7 @@ module.exports.invokeAssembler = function (sourceFilePath, outputPath) {
         toolchainSettings = JSON.parse(data)
         if (path.extname(sourceFilePath) == '.asm') {
           let emiter = child_process.exec(
-            `node ${toolchainSettings.assembler_path} ${sourceFilePath} ${outputPath}`,
+            `node ${toolchainSettings.assembler_path} "${sourceFilePath}" "${outputPath}"`,
             () => {
               $('#output').value += '\n'
             }
@@ -107,4 +107,55 @@ module.exports.invokeAssembler = function (sourceFilePath, outputPath) {
   } else {
     console.error('没有找到待汇编的文件！')
   }
+}
+
+module.exports.invokeSerialPort = function (sourceFilePath) {
+  sourceFilePath = sourceFilePath.replace(/\\/g, '/')
+
+  if (sourceFilePath) {
+    fs.readFile(jsonPath, 'utf8', (err, data) => {
+      if (err) {
+        console.error(err)
+        dialog.showMessageBox({
+          type: 'error',
+          title: '错误',
+          message: '读取配置文件失败',
+          button: ['确定'],
+        })
+      } else {
+        $('#console').style.display = 'flex'
+        toolchainSettings = JSON.parse(data)
+        if (path.extname(sourceFilePath) == '.txt') {
+          let emiter = child_process.exec(
+            `${toolchainSettings.serialport_path} "${sourceFilePath}" ${toolchainSettings.serialport_num.replace(
+              'COM',
+              ''
+            )} ${toolchainSettings.serialport_baud}`,
+            () => {
+              $('#output').value += '\n'
+            }
+          )
+          emiter.stdout.on('data', data => {
+            $('#output').value += String(data)
+            $('#output').scrollTop = $('#output').scrollHeight
+          })
+          emiter.stderr.on('data', data => {
+            $('#output').value += String(data)
+            $('#output').scrollTop = $('#output').scrollHeight
+          })
+        } else {
+          dialog.showMessageBox({
+            type: 'error',
+            title: '错误',
+            message: '当前打开的不是.txt文件，请检查文件类型后重试！',
+            button: ['确定'],
+          })
+        }
+      }
+    })
+  } else {
+    console.error('没有找到待串口烧录的文件！')
+  }
+  // TODO:串口烧录
+  //波特率:128000 串口号：COM4 校验位：NONE 数据位：8 停止位：1
 }

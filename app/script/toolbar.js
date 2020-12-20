@@ -3,7 +3,7 @@
 'use strict'
 
 const { newFileDialog, saveFileDialog } = require('./fileOperation')
-const { invokeCompiler, invokeAssembler } = require('./toolchain')
+const { invokeCompiler, invokeAssembler, invokeSerialPort } = require('./toolchain')
 const { $, getProperty } = require('./utils')
 const path = require('path')
 const dialog = require('electron').remote.dialog
@@ -58,6 +58,21 @@ const handlers = {
       })
     }
   },
+  'serial':()=>{
+    const currentFilePath = getProperty('currentFilePath')
+    if (currentFilePath) {
+      invokeSerialPort(currentFilePath)
+    } else {
+      dialog.showMessageBox({
+        type: 'error',
+        title: '错误',
+        message: !getProperty('currentFilePath')
+        ? '当前没有打开的文件，请打开一个.txt文件后再尝试串口烧录。'
+        : '当前没有打开的工作区，请打开一个工作区后再尝试串口烧录。',
+        button: ['确定'],
+      })
+    }
+  },
   'magic-click': () => {
     if (getProperty('currentFilePath') && getProperty('currentPath')) {
       const currentPath = getProperty('currentPath')
@@ -71,7 +86,8 @@ const handlers = {
       const assemblerOutputPath = path.join(currentPath, './out', path.basename(currentFilePath, '.c') + '.asm', './')
       fs.mkdirSync(assemblerOutputPath, { recursive: true })
       invokeAssembler(asmOutputFile, assemblerOutputPath)
-      //TODO:还没加入烧录
+      // call serialport
+      invokeSerialPort(path.join(assemblerOutputPath,'serial.txt'))
     } else {
       dialog.showMessageBox({
         type: 'error',

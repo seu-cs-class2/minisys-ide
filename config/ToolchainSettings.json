@@ -1,4 +1,7 @@
 {
   "compiler_path": "E:\\minisys\\minisys-mincc-ts\\dist\\cli.js",
-  "assembler_path": "E:\\minisys\\minisys-asm\\dist\\entry\\node.js"
+  "assembler_path": "E:\\minisys\\minisys-asm\\dist\\entry\\node.js",
+  "serialport_num": "COM5",
+  "serialport_path": "E:\\minisys\\minisys-ide\\lib\\minisys-serialport\\SerialPortTransmitter.exe",
+  "serialport_baud": "9600"
 }

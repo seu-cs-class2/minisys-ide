@@ -13,6 +13,14 @@ const $ = document.querySelector.bind(document)
 let toolchainSettings
 const compilerPathDOM = $('[name="compiler-path"]')
 const assemblerPathDOM = $('[name="assembler-path"]')
+const serialportPathDOM = $('[name="serialport-path"]')
+const serialportNumDOM = $('[name="serialport-num"]')
+const serialportBaudDOM = $('[name="serialport-baud"]')
+
+const serialportNum = Array(16)
+  .fill(0)
+  .map((_, i) => 'COM' + (i + 1))
+const serialportBaud = ['1200', '2400', '4800', '9600', '14400', '19200', '38400', '56000']
 
 // 读取配置，初始化菜单选项
 fs.readFile(jsonPath, 'utf8', (err, data) => {
@@ -26,8 +34,24 @@ fs.readFile(jsonPath, 'utf8', (err, data) => {
     })
   } else {
     toolchainSettings = JSON.parse(data)
-    compilerPathDOM.innerHTML = toolchainSettings.compiler_path
-    assemblerPathDOM.innerHTML = toolchainSettings.assembler_path
+    compilerPathDOM.value = toolchainSettings.compiler_path
+    assemblerPathDOM.value = toolchainSettings.assembler_path
+    serialportPathDOM.value = toolchainSettings.serialport_path
+    serialportNum.forEach(v => {
+      const node = document.createElement('option')
+      node.innerHTML = v
+      node.value = +v.replace('COM', '')
+      serialportNumDOM.appendChild(node)
+    })
+    serialportNumDOM.selectedIndex = serialportNum.indexOf(toolchainSettings.serialport_num)
+
+    serialportBaud.forEach(v => {
+      const node = document.createElement('option')
+      node.innerHTML = v
+      node.value = v
+      serialportBaudDOM.appendChild(node)
+    })
+    serialportBaudDOM.selectedIndex = serialportBaud.indexOf(toolchainSettings.serialport_baud)
   }
 })
 
@@ -39,8 +63,8 @@ document.querySelectorAll('.btn-path').forEach(
           title: '选择文件...',
           filters: [
             {
-              name: 'js文件',
-              extensions: ['js'],
+              name: v.id == 'btn-serialport-path' ? 'exe可执行文件' : 'js文件',
+              extensions: v.id == 'btn-serialport-path' ? ['exe'] : ['js'],
             },
           ],
         })
@@ -50,6 +74,8 @@ document.querySelectorAll('.btn-path').forEach(
               compilerPathDOM.value = res.filePaths[0]
             } else if (v.id == 'btn-assembler-path') {
               assemblerPathDOM.value = res.filePaths[0]
+            } else if (v.id == 'btn-serialport-path') {
+              serialportPathDOM.value = res.filePaths[0]
             }
           }
         })
@@ -57,8 +83,11 @@ document.querySelectorAll('.btn-path').forEach(
 )
 
 $('#btn-confirm').onclick = function () {
-  toolchainSettings.compiler_path = compilerPathDOM.innerHTML
-  toolchainSettings.assembler_path = assemblerPathDOM.innerHTML
+  toolchainSettings.compiler_path = compilerPathDOM.value
+  toolchainSettings.assembler_path = assemblerPathDOM.value
+  toolchainSettings.serialport_path = serialportPathDOM.value
+  toolchainSettings.serialport_num = serialportNum[serialportNumDOM.selectedIndex]
+  toolchainSettings.serialport_baud = serialportBaud[serialportBaudDOM.selectedIndex]
   fs.writeFile(jsonPath, JSON.stringify(toolchainSettings, null, 2), async err => {
     if (err) {
       console.error(err)
