@@ -7,6 +7,8 @@ const path = require('path')
 // FIXME: 暂时注释，避免隐藏调试时的错误
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
+app.allowRendererProcessReuse = false
+
 app.on('ready', () => {
   const win = new BrowserWindow({
     width: 1024,
@@ -16,10 +18,10 @@ app.on('ready', () => {
       enableRemoteModule: true,
       worldSafeExecuteJavaScript: true,
     },
-    icon: path.join(__dirname, '../../asset/favicon.ico')
+    icon: path.join(__dirname, '../../asset/favicon.ico'),
   })
   win.loadFile('./app/view/index.html')
-  // win.webContents.openDevTools() // F12
+  win.webContents.openDevTools() // F12
   win.maximize()
 })
 

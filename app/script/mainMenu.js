@@ -206,7 +206,7 @@ const menuTemplate = [
       {
         label: '工具链设置',
         click: () => {
-          window.open('./ToolchainSettings.html', '_blank', 'width=600,height=290,left=25%,frame=false,resizable=false')
+          window.open('./ToolchainSettings.html', '_blank', 'width=600,height=335,left=25%,frame=false,resizable=false')
         },
       },
       {
