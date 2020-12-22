@@ -18,8 +18,8 @@
     "electron-prompt": "^1.6.0"
   },
   "devDependencies": {
-    "electron": "^10.1.3",
     "cross-env": "^7.0.2",
+    "electron": "^10.1.3",
     "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
     "electron-reloader": "^1.0.1"
