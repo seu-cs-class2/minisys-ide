@@ -36,4 +36,4 @@ editorContextmenu.addEventListener('contextmenu', e => {
   e.preventDefault()
   menu.popup({ window: remote.getCurrentWindow() })
 })
-//editor内的右键菜单
+// editor内的右键菜单
