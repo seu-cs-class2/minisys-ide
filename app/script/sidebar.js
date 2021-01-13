@@ -56,7 +56,18 @@ function initSideBar() {
     const openedDocs = getProperty('openedDocs')
 
     // 如果文件已被打开到上部，则跳过
-    if (openedDocs.some(v => v.path == dataset.path)) return
+    if (openedDocs.some(v => v.path == dataset.path)) {
+      $('#lazy-op').childNodes.forEach(li => {
+        li.childNodes.forEach(dom => {
+          if (dom.nodeType == 1 && dom.tagName.toLowerCase() == 'span' && dom.dataset.path == dataset.path) {
+            const ev = document.createEvent('MouseEvents')
+            ev.initEvent('click', true, true)
+            dom.dispatchEvent(ev)
+          }
+        })
+      })
+      return
+    }
 
     // 类型是文件
     if (dataset.type == 'file') {
@@ -214,7 +225,7 @@ module.exports.initSideBar = initSideBar
 function updateSideBarHigh(_path, defaultOpen) {
   $('#opened-view').innerHTML = ''
   const openedDocs = getProperty('openedDocs')
-  let res = '<ul>'
+  let res = '<ul id="lazy-op">'
   openedDocs.forEach(file => {
     res += `<li>
     <img src="../../asset/close_icon.png" class="close-icon"/>

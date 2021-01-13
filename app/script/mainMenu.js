@@ -165,16 +165,6 @@ const menuTemplate = [
         label: '编译',
         accelerator: 'f6',
         click: () => {
-          // if (getProperty('currentFilePath')) {
-          //   invokeCompiler(getProperty('currentFilePath'), path.join(getProperty('currentFilePath'), '../asm'))
-          // } else {
-          //   dialog.showMessageBox({
-          //     type: 'error',
-          //     title: '错误',
-          //     message: '当前没有打开的文件，请打开一个文件后再尝试编译。',
-          //     button: ['确定'],
-          //   })
-          // }
           const currentPath = getProperty('currentPath')
           const currentFilePath = getProperty('currentFilePath')
           if (currentFilePath && currentPath) {
@@ -197,16 +187,6 @@ const menuTemplate = [
         label: '汇编',
         accelerator: 'f7',
         click: () => {
-          // if (getProperty('currentFilePath')) {
-          //   invokeAssembler(getProperty('currentFilePath'), getProperty('currentPath') + '/out')
-          // } else {
-          //   dialog.showMessageBox({
-          //     type: 'error',
-          //     title: '错误',
-          //     message: '当前没有打开的文件，请打开一个文件后再尝试汇编。',
-          //     button: ['确定'],
-          //   })
-          // }
           const currentPath = getProperty('currentPath')
           const currentFilePath = getProperty('currentFilePath')
           if (currentFilePath && currentPath) {
