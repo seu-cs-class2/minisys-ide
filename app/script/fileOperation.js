@@ -71,7 +71,7 @@ init().then(
             console.error(err)
           } else {
             const openedDocs = getProperty('openedDocs')
-            openedDocs.find(v => v.path == getProperty('currentFilePath')).modified = false
+            openedDocs.find(v => v.path == getProperty('currentFilePath')) && (openedDocs.find(v => v.path == getProperty('currentFilePath')).modified = false)
             updateSideBarHigh(getProperty('currentFilePath'), true)
           }
         })
@@ -90,14 +90,14 @@ init().then(
      * 新建文件并保存
      */
     const newFile = title => {
-      return function () {
+      return new Promise((resolve, reject) => {
         dialog
           .showSaveDialog({
             title,
           })
           .then(res => {
             if (res.filePath) {
-              fs.writeFile(res.filePath, editor.getValue(), 'utf8', err => {
+              fs.writeFile(res.filePath, title == '新建文件' ? '' : editor.getValue(), 'utf8', err => {
                 if (err) {
                   console.error(err)
                 } else {
@@ -105,18 +105,18 @@ init().then(
                     .showMessageBox({
                       type: 'info',
                       title: '提示',
-                      message: '保存成功！',
+                      message: '新建成功！',
                       button: ['确定'],
                     })
-                    .then(res1 => {
-                      // TODO: ?
+                    .then(() => {
                       setProperty('currentFilePath', res.filePath)
+                      resolve()
                     })
                 }
               })
             }
           })
-      }
+      })
     }
     module.exports.newFileDialog = newFile
 

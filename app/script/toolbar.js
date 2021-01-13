@@ -5,6 +5,7 @@
 const { newFileDialog, saveFileDialog } = require('./fileOperation')
 const { invokeCompiler, invokeAssembler, invokeSerialPort } = require('./toolchain')
 const { $, getProperty } = require('./utils')
+const { initSideBarLow } = require('./sidebar')
 const path = require('path')
 const dialog = require('electron').remote.dialog
 const fs = require('fs')
@@ -14,12 +15,17 @@ function defaultFunc() {
 }
 
 const handlers = {
-  'new-file': newFileDialog('新建文件'),
+  'new-file':  async () => {
+    await newFileDialog('新建文件')()
+    initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
+  },
   // prettier-ignore
   'save': () => {
-    !getProperty('currentFilePath') ? newFileDialog('保存为')() : saveFileDialog()
+    !getProperty('currentFilePath') ? newFileDialog('保存为') : saveFileDialog()
   },
-  'save-as': newFileDialog('另存为'),
+  'save-as':() => {
+    newFileDialog('另存为')
+  },
   // prettier-ignore
   'compile': () => {
     const currentPath = getProperty('currentPath')
@@ -58,7 +64,7 @@ const handlers = {
       })
     }
   },
-  'serial':()=>{
+  serial: () => {
     const currentFilePath = getProperty('currentFilePath')
     if (currentFilePath) {
       invokeSerialPort(currentFilePath)
@@ -67,8 +73,8 @@ const handlers = {
         type: 'error',
         title: '错误',
         message: !getProperty('currentFilePath')
-        ? '当前没有打开的文件，请打开一个.txt文件后再尝试串口烧录。'
-        : '当前没有打开的工作区，请打开一个工作区后再尝试串口烧录。',
+          ? '当前没有打开的文件，请打开一个.txt文件后再尝试串口烧录。'
+          : '当前没有打开的工作区，请打开一个工作区后再尝试串口烧录。',
         button: ['确定'],
       })
     }
@@ -87,7 +93,7 @@ const handlers = {
       fs.mkdirSync(assemblerOutputPath, { recursive: true })
       invokeAssembler(asmOutputFile, assemblerOutputPath)
       // call serialport
-      invokeSerialPort(path.join(assemblerOutputPath,'serial.txt'))
+      invokeSerialPort(path.join(assemblerOutputPath, 'serial.txt'))
     } else {
       dialog.showMessageBox({
         type: 'error',
