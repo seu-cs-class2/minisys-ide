@@ -81,7 +81,7 @@ module.exports.invokeAssembler = function (sourceFilePath, outputPath) {
         toolchainSettings = JSON.parse(data)
         if (path.extname(sourceFilePath) == '.asm') {
           let emiter = child_process.exec(
-            `node ${toolchainSettings.assembler_path} "${sourceFilePath}" "${outputPath}"`,
+            `node ${toolchainSettings.assembler_path} "${sourceFilePath}" "${outputPath}" -l`,
             () => {
               $('#output').value += '\n'
             }

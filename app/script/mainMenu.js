@@ -20,7 +20,10 @@ const menuTemplate = [
       {
         label: '新建文件',
         accelerator: 'ctrl+n',
-        click: newFileDialog('新建文件'),
+        click: async () => {
+          await newFileDialog('新建文件')
+          initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
+        },
       },
       {
         label: '打开文件',
@@ -45,13 +48,15 @@ const menuTemplate = [
         label: '保存',
         accelerator: 'ctrl+s',
         click: () => {
-          !getProperty('currentFilePath') ? newFileDialog('保存为')() : saveFileDialog()
+          !getProperty('currentFilePath') ? newFileDialog('保存为') : saveFileDialog()
         },
       },
       {
         label: '另存为',
         accelerator: '',
-        click: newFileDialog('另存为'),
+        click: () => {
+          newFileDialog('另存为')
+        },
       },
       {
         type: 'separator',
@@ -160,13 +165,29 @@ const menuTemplate = [
         label: '编译',
         accelerator: 'f6',
         click: () => {
-          if (getProperty('currentFilePath')) {
-            invokeCompiler(getProperty('currentFilePath'), path.join(getProperty('currentFilePath'), '../asm'))
+          // if (getProperty('currentFilePath')) {
+          //   invokeCompiler(getProperty('currentFilePath'), path.join(getProperty('currentFilePath'), '../asm'))
+          // } else {
+          //   dialog.showMessageBox({
+          //     type: 'error',
+          //     title: '错误',
+          //     message: '当前没有打开的文件，请打开一个文件后再尝试编译。',
+          //     button: ['确定'],
+          //   })
+          // }
+          const currentPath = getProperty('currentPath')
+          const currentFilePath = getProperty('currentFilePath')
+          if (currentFilePath && currentPath) {
+            const realOutputPath = path.join(currentPath, './out', path.basename(currentFilePath), './')
+            fs.mkdirSync(realOutputPath, { recursive: true })
+            invokeCompiler(currentFilePath, realOutputPath)
           } else {
             dialog.showMessageBox({
               type: 'error',
               title: '错误',
-              message: '当前没有打开的文件，请打开一个文件后再尝试编译。',
+              message: !currentFilePath
+                ? '当前没有打开的文件，请打开一个.c文件后再尝试编译。'
+                : '当前没有打开的工作区，请打开一个工作区后再尝试编译。',
               button: ['确定'],
             })
           }
@@ -176,13 +197,29 @@ const menuTemplate = [
         label: '汇编',
         accelerator: 'f7',
         click: () => {
-          if (getProperty('currentFilePath')) {
-            invokeAssembler(getProperty('currentFilePath'), getProperty('currentPath') + '/out')
+          // if (getProperty('currentFilePath')) {
+          //   invokeAssembler(getProperty('currentFilePath'), getProperty('currentPath') + '/out')
+          // } else {
+          //   dialog.showMessageBox({
+          //     type: 'error',
+          //     title: '错误',
+          //     message: '当前没有打开的文件，请打开一个文件后再尝试汇编。',
+          //     button: ['确定'],
+          //   })
+          // }
+          const currentPath = getProperty('currentPath')
+          const currentFilePath = getProperty('currentFilePath')
+          if (currentFilePath && currentPath) {
+            const realOutputPath = path.join(currentPath, './out', path.basename(currentFilePath), './')
+            fs.mkdirSync(realOutputPath, { recursive: true })
+            invokeAssembler(currentFilePath, realOutputPath)
           } else {
             dialog.showMessageBox({
               type: 'error',
               title: '错误',
-              message: '当前没有打开的文件，请打开一个文件后再尝试汇编。',
+              message: !getProperty('currentFilePath')
+                ? '当前没有打开的文件，请打开一个.asm文件后再尝试汇编。'
+                : '当前没有打开的工作区，请打开一个工作区后再尝试汇编。',
               button: ['确定'],
             })
           }
@@ -230,17 +267,11 @@ const menuTemplate = [
     label: '帮助',
     submenu: [
       {
-        label: '文档',
+        label: '文档与关于',
         click: () => {
           child_process.exec(`start https://github.com/seu-cs-class2/minisys-ide/blob/master/README.md`)
         },
-      },
-      {
-        label: '关于',
-        click: () => {
-          child_process.exec(`start https://github.com/seu-cs-class2/minisys-ide/blob/master/README.md`)
-        },
-      },
+      }
     ],
   },
 ]

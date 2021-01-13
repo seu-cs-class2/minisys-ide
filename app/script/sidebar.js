@@ -9,7 +9,7 @@ const prompt = require('electron-prompt')
 const { dialog } = require('electron').remote
 
 const { getProperty, setProperty, $, getHighlightMode, getIcon } = require('./utils')
-const { saveSessionToFile } = require('./fileOperation')
+const { saveSessionToFile, newFileDialog } = require('./fileOperation')
 
 /**
  * 初始化侧边栏
@@ -24,24 +24,8 @@ function initSideBar() {
 
   // 下部的新建文件按钮响应
   $('#newFile').addEventListener('click', async () => {
-    if (getProperty('currentPath')) {
-      let fileName = await prompt({
-        title: '请输入...',
-        label: '文件名：',
-        value: '新建文件',
-      })
-      // 检查是否有重复文件，没有则创建
-      try {
-        fs.statSync(`${getProperty('currentPath')}/${fileName}`)
-        dialog.showErrorBox('错误', '文件重复，请检查！')
-      } catch (e) {
-        fs.writeFile(`${getProperty('currentPath')}/${fileName}`, '', err => {
-          err && dialog.showErrorBox('错误', '文件重复，请检查！')
-        })
-      }
-      // 刷新
-      initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
-    }
+    await newFileDialog('新建文件')
+    initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
   })
 
   // 下部的新建文件夹按钮响应
@@ -53,9 +37,10 @@ function initSideBar() {
         value: '新建文件夹',
       })
       // 如有重复文件夹，则弹出提示框
-      fs.mkdir(`${getProperty('currentPath')}/${folderName}`, err => {
-        err && dialog.showErrorBox('错误', '文件夹重复，请检查！')
-      })
+      if (folderName)
+        fs.mkdir(`${getProperty('currentPath')}/${folderName}`, err => {
+          err && dialog.showErrorBox('错误', '文件夹重复，请检查！')
+        })
       // 刷新
       initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
     }
@@ -216,7 +201,7 @@ function initSideBar() {
         // 更新属性
         setProperty('currentFilePath', target.dataset.path)
         // 给新文件上色
-        target.style.backgroundColor = '#4169e1'
+        target.style.backgroundColor = '#039BE5'
         break
     }
   })
@@ -235,7 +220,7 @@ function updateSideBarHigh(_path, defaultOpen) {
     <img src="../../asset/close_icon.png" class="close-icon"/>
     <img class="file-icon" src="${getIcon('file', `${file.name}`)}"></img><span data-path="${
       file.path
-    }" style="background-color: ${file.path == _path && defaultOpen ? '#4169e1' : ''}">${
+    }" style="background-color: ${file.path == _path && defaultOpen ? '#039BE5' : ''}">${
       (file.modified ? '* ' : '') + file.name
     }</span></li>`
   })
@@ -268,7 +253,8 @@ function initSideBarLow(clickedPath, dom, refresh) {
             </span>
             <ul></ul>
             </li>`
-          else
+        for (let children of tree.children)
+          if (children.type == 'file')
             res += `<li>
             <img src="${getIcon('file', children.name)}" class="file-icon"></img>
             <span data-path="${children.path}" data-type="file" data-name="${children.name}">
