@@ -1,6 +1,6 @@
 {
   "name": "minisys-ide",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Minisys IDE",
   "main": "app.js",
   "scripts": {

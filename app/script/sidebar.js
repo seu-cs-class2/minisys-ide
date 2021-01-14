@@ -6,6 +6,7 @@ const dree = require('dree')
 const path = require('path')
 const fs = require('fs')
 const prompt = require('electron-prompt')
+const child_process = require('child_process')
 const { dialog } = require('electron').remote
 
 const { getProperty, setProperty, $, getHighlightMode, getIcon } = require('./utils')
@@ -46,6 +47,11 @@ function initSideBar() {
     }
   })
 
+  // 下部的打开当前文件夹按钮响应
+  $('#openCurFolder').addEventListener('click', () => {
+    if (getProperty('currentPath')) child_process.exec(`start ${getProperty('currentPath')}`)
+  })
+
   // 设置下半部分（目录树）监听
   $('#tree-view').addEventListener('click', e => {
     e.stopPropagation()
@@ -56,7 +62,18 @@ function initSideBar() {
     const openedDocs = getProperty('openedDocs')
 
     // 如果文件已被打开到上部，则跳过
-    if (openedDocs.some(v => v.path == dataset.path)) return
+    if (openedDocs.some(v => v.path == dataset.path)) {
+      $('#lazy-op').childNodes.forEach(li => {
+        li.childNodes.forEach(dom => {
+          if (dom.nodeType == 1 && dom.tagName.toLowerCase() == 'span' && dom.dataset.path == dataset.path) {
+            const ev = document.createEvent('MouseEvents')
+            ev.initEvent('click', true, true)
+            dom.dispatchEvent(ev)
+          }
+        })
+      })
+      return
+    }
 
     // 类型是文件
     if (dataset.type == 'file') {
@@ -214,7 +231,7 @@ module.exports.initSideBar = initSideBar
 function updateSideBarHigh(_path, defaultOpen) {
   $('#opened-view').innerHTML = ''
   const openedDocs = getProperty('openedDocs')
-  let res = '<ul>'
+  let res = '<ul id="lazy-op">'
   openedDocs.forEach(file => {
     res += `<li>
     <img src="../../asset/close_icon.png" class="close-icon"/>
