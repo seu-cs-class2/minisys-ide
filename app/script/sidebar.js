@@ -6,6 +6,7 @@ const dree = require('dree')
 const path = require('path')
 const fs = require('fs')
 const prompt = require('electron-prompt')
+const child_process = require('child_process')
 const { dialog } = require('electron').remote
 
 const { getProperty, setProperty, $, getHighlightMode, getIcon } = require('./utils')
@@ -44,6 +45,11 @@ function initSideBar() {
       // 刷新
       initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
     }
+  })
+
+  // 下部的打开当前文件夹按钮响应
+  $('#openCurFolder').addEventListener('click', () => {
+    if (getProperty('currentPath')) child_process.exec(`start ${getProperty('currentPath')}`)
   })
 
   // 设置下半部分（目录树）监听
