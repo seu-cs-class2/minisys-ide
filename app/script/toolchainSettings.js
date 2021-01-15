@@ -14,13 +14,13 @@ let toolchainSettings
 const compilerPathDOM = $('[name="compiler-path"]')
 const assemblerPathDOM = $('[name="assembler-path"]')
 const serialportPathDOM = $('[name="serialport-path"]')
-const serialportNumDOM = $('[name="serialport-num"]')
-const serialportBaudDOM = $('[name="serialport-baud"]')
+// const serialportNumDOM = $('[name="serialport-num"]')
+// const serialportBaudDOM = $('[name="serialport-baud"]')
 
-const serialportNum = Array(16)
-  .fill(0)
-  .map((_, i) => 'COM' + (i + 1))
-const serialportBaud = ['1200', '2400', '4800', '9600', '14400', '19200', '38400', '56000']
+// const serialportNum = Array(16)
+//   .fill(0)
+//   .map((_, i) => 'COM' + (i + 1))
+// const serialportBaud = ['1200', '2400', '4800', '9600', '14400', '19200', '38400', '56000']
 
 // 读取配置，初始化菜单选项
 fs.readFile(jsonPath, 'utf8', (err, data) => {
@@ -37,21 +37,21 @@ fs.readFile(jsonPath, 'utf8', (err, data) => {
     compilerPathDOM.value = toolchainSettings.compiler_path
     assemblerPathDOM.value = toolchainSettings.assembler_path
     serialportPathDOM.value = toolchainSettings.serialport_path
-    serialportNum.forEach(v => {
-      const node = document.createElement('option')
-      node.innerHTML = v
-      node.value = +v.replace('COM', '')
-      serialportNumDOM.appendChild(node)
-    })
-    serialportNumDOM.selectedIndex = serialportNum.indexOf(toolchainSettings.serialport_num)
+    // serialportNum.forEach(v => {
+    //   const node = document.createElement('option')
+    //   node.innerHTML = v
+    //   node.value = +v.replace('COM', '')
+    //   serialportNumDOM.appendChild(node)
+    // })
+    // serialportNumDOM.selectedIndex = serialportNum.indexOf(toolchainSettings.serialport_num)
 
-    serialportBaud.forEach(v => {
-      const node = document.createElement('option')
-      node.innerHTML = v
-      node.value = v
-      serialportBaudDOM.appendChild(node)
-    })
-    serialportBaudDOM.selectedIndex = serialportBaud.indexOf(toolchainSettings.serialport_baud)
+    // serialportBaud.forEach(v => {
+    //   const node = document.createElement('option')
+    //   node.innerHTML = v
+    //   node.value = v
+    //   serialportBaudDOM.appendChild(node)
+    // })
+    // serialportBaudDOM.selectedIndex = serialportBaud.indexOf(toolchainSettings.serialport_baud)
   }
 })
 
@@ -86,8 +86,8 @@ $('#btn-confirm').onclick = function () {
   toolchainSettings.compiler_path = compilerPathDOM.value
   toolchainSettings.assembler_path = assemblerPathDOM.value
   toolchainSettings.serialport_path = serialportPathDOM.value
-  toolchainSettings.serialport_num = serialportNum[serialportNumDOM.selectedIndex]
-  toolchainSettings.serialport_baud = serialportBaud[serialportBaudDOM.selectedIndex]
+  // toolchainSettings.serialport_num = serialportNum[serialportNumDOM.selectedIndex]
+  // toolchainSettings.serialport_baud = serialportBaud[serialportBaudDOM.selectedIndex]
   fs.writeFile(jsonPath, JSON.stringify(toolchainSettings, null, 2), async err => {
     if (err) {
       console.error(err)

@@ -127,13 +127,14 @@ module.exports.invokeSerialPort = function (sourceFilePath) {
         toolchainSettings = JSON.parse(data)
         if (path.extname(sourceFilePath) == '.txt') {
           let emiter = child_process.exec(
-            `${toolchainSettings.serialport_path} "${sourceFilePath}" ${toolchainSettings.serialport_num.replace(
-              'COM',
-              ''
-            )} ${toolchainSettings.serialport_baud}`,
-            () => {
-              $('#output').value += '\n'
-            }
+            // `${toolchainSettings.serialport_path} "${sourceFilePath}" ${toolchainSettings.serialport_num.replace(
+            //   'COM',
+            //   ''
+            // )} ${toolchainSettings.serialport_baud}`,
+            // () => {
+            //   $('#output').value += '\n'
+            // }
+            `start ${toolchainSettings.serialport_path}`
           )
           emiter.stdout.on('data', data => {
             $('#output').value += String(data)
