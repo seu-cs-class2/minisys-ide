@@ -157,6 +157,5 @@ module.exports.invokeSerialPort = function (sourceFilePath) {
   } else {
     console.error('没有找到待串口烧录的文件！')
   }
-  // TODO:串口烧录
-  //波特率:128000 串口号：COM4 校验位：NONE 数据位：8 停止位：1
+  // 波特率:128000  校验位：NONE 数据位：8 停止位：1
 }

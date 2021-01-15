@@ -109,7 +109,7 @@ const handlers = {
       const asmOutputFile = path.join(compilerOutputPath, path.basename(currentFilePath, '.c') + '.asm')
       const assemblerOutputPath = path.join(currentPath, './out', path.basename(currentFilePath, '.c') + '.asm', './')
       fs.mkdirSync(assemblerOutputPath, { recursive: true })
-      invokeAssembler(asmOutputFile, assemblerOutputPath,1)
+      invokeAssembler(asmOutputFile, assemblerOutputPath, 1)
       // call serialport
       invokeSerialPort(path.join(assemblerOutputPath, 'serial.txt'))
     } else {
