@@ -15,7 +15,7 @@ function defaultFunc() {
 }
 
 const handlers = {
-  'new-file':  async () => {
+  'new-file': async () => {
     await newFileDialog('新建文件')()
     initSideBarLow(getProperty('currentPath'), $('#tree-view'), true)
   },
@@ -23,7 +23,7 @@ const handlers = {
   'save': () => {
     !getProperty('currentFilePath') ? newFileDialog('保存为') : saveFileDialog()
   },
-  'save-as':() => {
+  'save-as': () => {
     newFileDialog('另存为')
   },
   // prettier-ignore
@@ -52,7 +52,7 @@ const handlers = {
     if (currentFilePath && currentPath) {
       const realOutputPath = path.join(currentPath, './out', path.basename(currentFilePath), './')
       fs.mkdirSync(realOutputPath, {recursive: true})
-      invokeAssembler(currentFilePath, realOutputPath)
+      invokeAssembler(currentFilePath, realOutputPath,0)
     } else {
       dialog.showMessageBox({
         type: 'error',
@@ -60,6 +60,24 @@ const handlers = {
         message: !getProperty('currentFilePath')
         ? '当前没有打开的文件，请打开一个.asm文件后再尝试汇编。'
         : '当前没有打开的工作区，请打开一个工作区后再尝试汇编。',
+        button: ['确定'],
+      })
+    }
+  },
+  'assembly-and-link': () => {
+    const currentPath = getProperty('currentPath')
+    const currentFilePath = getProperty('currentFilePath')
+    if (currentFilePath && currentPath) {
+      const realOutputPath = path.join(currentPath, './out', path.basename(currentFilePath), './')
+      fs.mkdirSync(realOutputPath, { recursive: true })
+      invokeAssembler(currentFilePath, realOutputPath, 1)
+    } else {
+      dialog.showMessageBox({
+        type: 'error',
+        title: '错误',
+        message: !getProperty('currentFilePath')
+          ? '当前没有打开的文件，请打开一个.asm文件后再尝试汇编。'
+          : '当前没有打开的工作区，请打开一个工作区后再尝试汇编。',
         button: ['确定'],
       })
     }
@@ -91,7 +109,7 @@ const handlers = {
       const asmOutputFile = path.join(compilerOutputPath, path.basename(currentFilePath, '.c') + '.asm')
       const assemblerOutputPath = path.join(currentPath, './out', path.basename(currentFilePath, '.c') + '.asm', './')
       fs.mkdirSync(assemblerOutputPath, { recursive: true })
-      invokeAssembler(asmOutputFile, assemblerOutputPath)
+      invokeAssembler(asmOutputFile, assemblerOutputPath,1)
       // call serialport
       invokeSerialPort(path.join(assemblerOutputPath, 'serial.txt'))
     } else {

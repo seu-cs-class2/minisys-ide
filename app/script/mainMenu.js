@@ -149,7 +149,7 @@ const menuTemplate = [
               './'
             )
             fs.mkdirSync(assemblerOutputPath)
-            invokeAssembler(asmOutputFile, assemblerOutputPath)
+            invokeAssembler(asmOutputFile, assemblerOutputPath,-1)
             // TODO:还没加入烧录
           } else {
             dialog.showMessageBox({
@@ -192,7 +192,29 @@ const menuTemplate = [
           if (currentFilePath && currentPath) {
             const realOutputPath = path.join(currentPath, './out', path.basename(currentFilePath), './')
             fs.mkdirSync(realOutputPath, { recursive: true })
-            invokeAssembler(currentFilePath, realOutputPath)
+            invokeAssembler(currentFilePath, realOutputPath, 0)
+          } else {
+            dialog.showMessageBox({
+              type: 'error',
+              title: '错误',
+              message: !getProperty('currentFilePath')
+                ? '当前没有打开的文件，请打开一个.asm文件后再尝试汇编。'
+                : '当前没有打开的工作区，请打开一个工作区后再尝试汇编。',
+              button: ['确定'],
+            })
+          }
+        },
+      },
+      {
+        label: '汇编并链接',
+        accelerator: 'f8',
+        click: () => {
+          const currentPath = getProperty('currentPath')
+          const currentFilePath = getProperty('currentFilePath')
+          if (currentFilePath && currentPath) {
+            const realOutputPath = path.join(currentPath, './out', path.basename(currentFilePath), './')
+            fs.mkdirSync(realOutputPath, { recursive: true })
+            invokeAssembler(currentFilePath, realOutputPath, 1)
           } else {
             dialog.showMessageBox({
               type: 'error',
@@ -207,7 +229,7 @@ const menuTemplate = [
       },
       {
         label: '串口烧写',
-        accelerator: 'f8',
+        accelerator: 'f9',
       },
     ],
   },
@@ -251,7 +273,7 @@ const menuTemplate = [
         click: () => {
           child_process.exec(`start https://github.com/seu-cs-class2/minisys-ide/blob/master/README.md`)
         },
-      }
+      },
     ],
   },
 ]
