@@ -62,7 +62,7 @@ module.exports.invokeCompiler = function (sourceFilePath, outputPath) {
  * @param {*} sourceFilePath 待汇编的文件的绝对路径
  * @param {*} outputPath 生成的文件们的绝对路径
  */
-module.exports.invokeAssembler = function (sourceFilePath, outputPath) {
+module.exports.invokeAssembler = function (sourceFilePath, outputPath, link) {
   sourceFilePath = sourceFilePath.replace(/\\/g, '/')
   outputPath = outputPath.replace(/\\/g, '/')
 
@@ -81,9 +81,7 @@ module.exports.invokeAssembler = function (sourceFilePath, outputPath) {
         toolchainSettings = JSON.parse(data)
         if (path.extname(sourceFilePath) == '.asm') {
           let emiter = child_process.exec(
-            `node ${toolchainSettings.assembler_path} "${sourceFilePath}" "${outputPath}" ${
-              path.basename(sourceFilePath, '.asm') == 'linked' ? '' : '-l'
-            }`,
+            `node ${toolchainSettings.assembler_path} "${sourceFilePath}" "${outputPath}" ${link ? '-l' : ''}`,
             () => {
               $('#output').value += '\n'
             }
