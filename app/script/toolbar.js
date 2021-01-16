@@ -97,19 +97,19 @@ const handlers = {
       })
     }
   },
-  'magic-click': () => {
+  'magic-click': async () => {
     if (getProperty('currentFilePath') && getProperty('currentPath')) {
       const currentPath = getProperty('currentPath')
       const currentFilePath = getProperty('currentFilePath')
       // call compiler
       const compilerOutputPath = path.join(currentPath, './out', path.basename(currentFilePath), './')
       fs.mkdirSync(compilerOutputPath, { recursive: true })
-      invokeCompiler(currentFilePath, compilerOutputPath)
+      await invokeCompiler(currentFilePath, compilerOutputPath)
       // call assembler
       const asmOutputFile = path.join(compilerOutputPath, path.basename(currentFilePath, '.c') + '.asm')
       const assemblerOutputPath = path.join(currentPath, './out', path.basename(currentFilePath, '.c') + '.asm', './')
       fs.mkdirSync(assemblerOutputPath, { recursive: true })
-      invokeAssembler(asmOutputFile, assemblerOutputPath, 1)
+      await invokeAssembler(asmOutputFile, assemblerOutputPath, 1)
       // call serialport
       invokeSerialPort(path.join(assemblerOutputPath, 'serial.txt'))
     } else {
