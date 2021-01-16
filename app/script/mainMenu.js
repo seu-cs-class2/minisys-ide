@@ -7,7 +7,7 @@ const { setProperty, getProperty, $ } = require('./utils')
 const { initSideBarLow } = require('./sidebar')
 const child_process = require('child_process')
 const { newFileDialog, openFileDialog, saveFileDialog } = require('./fileOperation')
-const { invokeCompiler, invokeAssembler } = require('./toolchain')
+const { invokeCompiler, invokeAssembler, invokeSerialPort } = require('./toolchain')
 const path = require('path')
 const fs = require('fs')
 
@@ -132,30 +132,32 @@ const menuTemplate = [
         label: '一键执行',
         accelerator: 'f5',
         click: () => {
-          if (getProperty('currentFilePath')) {
+          if (getProperty('currentFilePath') && getProperty('currentPath')) {
             const currentPath = getProperty('currentPath')
             const currentFilePath = getProperty('currentFilePath')
             // call compiler
             const compilerOutputPath = path.join(currentPath, './out', path.basename(currentFilePath), './')
-            fs.mkdirSync(compilerOutputPath)
+            fs.mkdirSync(compilerOutputPath, { recursive: true })
             invokeCompiler(currentFilePath, compilerOutputPath)
             // call assembler
-            const asmOutputFile = path.join(compilerOutputPath, path.basename(currentFilePath, '.c'), '.asm')
+            const asmOutputFile = path.join(compilerOutputPath, path.basename(currentFilePath, '.c') + '.asm')
             const assemblerOutputPath = path.join(
               currentPath,
               './out',
-              path.basename(currentFilePath, '.c'),
-              '.asm',
+              path.basename(currentFilePath, '.c') + '.asm',
               './'
             )
-            fs.mkdirSync(assemblerOutputPath)
-            invokeAssembler(asmOutputFile, assemblerOutputPath,-1)
-            // TODO:还没加入烧录
+            fs.mkdirSync(assemblerOutputPath, { recursive: true })
+            invokeAssembler(asmOutputFile, assemblerOutputPath, 1)
+            // call serialport
+            invokeSerialPort(path.join(assemblerOutputPath, 'serial.txt'))
           } else {
             dialog.showMessageBox({
               type: 'error',
               title: '错误',
-              message: '当前没有打开的文件，请打开一个.c文件后再尝试一键执行。',
+              message: !getProperty('currentFilePath')
+                ? '当前没有打开的文件，请打开一个.c文件后再尝试一键执行。'
+                : '当前没有打开的工作区，请打开一个工作区后再尝试一键执行。',
               button: ['确定'],
             })
           }
@@ -230,6 +232,9 @@ const menuTemplate = [
       {
         label: '串口烧写',
         accelerator: 'f9',
+        click: () => {
+          invokeSerialPort('x.txt') // FIXME 暂时写法
+        }
       },
     ],
   },
@@ -245,7 +250,7 @@ const menuTemplate = [
       {
         label: '工具链设置',
         click: () => {
-          window.open('./ToolchainSettings.html', '_blank', 'width=600,height=335,left=25%,frame=false,resizable=false')
+          window.open('./ToolchainSettings.html', '_blank', 'width=600,height=290,left=25%,frame=false,resizable=false')
         },
       },
       {

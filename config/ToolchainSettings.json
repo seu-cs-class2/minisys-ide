@@ -1,7 +1,7 @@
 {
-  "compiler_path": "E:\\minisys\\minisys-mincc-ts\\dist\\cli.js",
-  "assembler_path": "E:\\minisys\\minisys-asm\\dist\\entry\\node.js",
+  "compiler_path": "F:\\minisys-minicc-ts\\dist\\cli.js",
+  "assembler_path": "F:\\minisys-asm\\dist\\entry\\node.js",
   "serialport_num": "COM5",
-  "serialport_path": "E:\\minisys\\minisys-ide\\lib\\minisys-serialport\\UartAssist.exe",
+  "serialport_path": "F:\\minisys-ide\\lib\\minisys-serialport\\UartAssist.exe",
   "serialport_baud": "9600"
 }
