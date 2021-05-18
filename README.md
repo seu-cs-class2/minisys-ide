@@ -1,6 +1,6 @@
 # *minisys*-ide
 
-![index](https://i.loli.net/2020/12/29/GMR6DmOplAKLZhq.png)
+![index](https://z3.ax1x.com/2021/05/18/ghOiK1.png)
 
 - 安装
 
